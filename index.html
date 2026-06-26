@@ -107,6 +107,9 @@ body {
   margin-bottom: 32px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  gap: 32px;
+  align-items: center;
 }
 .hero::before {
   content: "";
@@ -115,6 +118,11 @@ body {
   width: 400px; height: 400px;
   background: radial-gradient(circle, rgba(127, 77, 255, 0.2) 0%, transparent 70%);
   border-radius: 50%;
+}
+.hero-text {
+  flex: 1;
+  position: relative;
+  min-width: 0;
 }
 .hero h1 {
   font-size: 2rem;
@@ -133,6 +141,19 @@ body {
   gap: 32px;
   margin-top: 24px;
   position: relative;
+}
+.hero-img {
+  flex-shrink: 0;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  max-width: 45%;
+}
+.hero-img img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .stat-item { text-align: center; }
 .stat-item .num {
@@ -516,7 +537,8 @@ body {
 @media (max-width: 768px) {
   .sidebar { width: 240px; min-width: 240px; }
   .main { margin-left: 240px; padding: 20px; }
-  .hero { padding: 32px 24px; }
+  .hero { padding: 32px 24px; flex-direction: column; }
+  .hero-img { max-width: 100%; }
   .hero h1 { font-size: 1.5rem; }
   .task-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
@@ -545,6 +567,7 @@ body {
     <a href="#tasks"><span class="icon">📚</span>教程章节</a>
     <a href="#gallery"><span class="icon">🖼️</span>图片资源</a>
     <a href="#files"><span class="icon">📁</span>文件结构</a>
+    <a href="video.html"><span class="icon">🎬</span>视频教程</a>
   </nav>
   <div class="sidebar-footer">
     共 167 个文件 · 8 个教程 · 150 张图片
@@ -557,12 +580,17 @@ body {
   <!-- 简介 Hero -->
   <section id="overview">
     <div class="hero">
-      <h1>SQL 基础教程学习笔记</h1>
-      <p>基于《SQL基础教程 第2版》（作者：MICK），由 DataWhale 团队编写的协作学习课程。通过 MySQL 进行教学，涵盖从环境搭建到高级查询的完整 SQL 知识体系。</p>
-      <div class="stats">
-        <div class="stat-item"><div class="num">8</div><div class="label">教程章节</div></div>
-        <div class="stat-item"><div class="num">150</div><div class="label">配图资源</div></div>
-        <div class="stat-item"><div class="num">6</div><div class="label">图片分类</div></div>
+      <div class="hero-text">
+        <h1>SQL 基础教程 · 学习方针</h1>
+        <p>基于《SQL基础教程 第2版》（作者：MICK），由 DataWhale 团队编写的协作学习课程。从环境搭建 → 基础查询 → 复杂查询 → 集合运算 → 高级处理 → 综合练习，循序渐进掌握 SQL 核心知识体系。</p>
+        <div class="stats">
+          <div class="stat-item"><div class="num">7</div><div class="label">教程章节</div></div>
+          <div class="stat-item"><div class="num">140+</div><div class="label">配图资源</div></div>
+          <div class="stat-item"><div class="num">6</div><div class="label">图片分类</div></div>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="ser/team-learning-sql-main/team-learning-sql-main/img/00 SQL基础课程.png" alt="SQL学习路线图" loading="lazy">
       </div>
     </div>
   </section>
@@ -664,6 +692,7 @@ const taskGrid = document.getElementById('taskGrid');
 tasks.forEach((task, i) => {
   const card = document.createElement('div');
   card.className = 'task-card';
+  card.style.cursor = 'pointer';
   card.onclick = () => openContent(task);
   card.innerHTML = `
     <div class="card-header">
@@ -683,30 +712,19 @@ const contentTitle = document.getElementById('contentTitle');
 const contentBody = document.getElementById('contentBody');
 
 function openContent(task) {
-  // 显示面板
   contentPanel.classList.add('active');
   contentOverlay.classList.add('active');
   document.body.style.overflow = 'hidden';
-
-  // 设置标题
   contentTitle.innerHTML = `<span class="task-badge">${task.num}</span> ${task.title}`;
-
-  // 显示加载状态
   contentBody.innerHTML = '<div class="content-loading"><div class="spinner"></div><p>正在加载教程内容...</p></div>';
-
-  // 拉取 Markdown 文件
   fetch(task.file)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.text();
     })
     .then(md => {
-      // 将 GitHub 图片链接替换为本地路径（如果本地存在对应章节的 img 目录）
-      // github URL 格式: https://github.com/datawhalechina/team-learning-sql/blob/main/img/chXX/xxx.png
       let html = marked.parse(md);
-      // 渲染完成，写入面板
       contentBody.innerHTML = `<div class="markdown-body">${html}</div>`;
-      // 滚动到顶部
       contentBody.scrollTop = 0;
     })
     .catch(err => {
@@ -798,10 +816,11 @@ function renderGallery() {
     html += `<h3 style="margin:24px 0 12px;font-size:1.05rem;color:#444;">📂 ${ch.name} <span style="color:#999;font-size:0.8rem;">(${ch.images.length} 张)</span></h3>`;
     html += '<div class="gallery-grid">';
     ch.images.forEach(img => {
-      const src = ch.folder ? `${imgBase}/${ch.folder}/${img}` : `${imgBase}/${img}`;
+      const raw = ch.folder ? `${imgBase}/${ch.folder}/${img}` : `${imgBase}/${img}`;
+      const src = encodeURI(raw);
       html += `
-        <div class="gallery-item" onclick="openModal('${src}')">
-          <img src="${src}" alt="${img}" loading="lazy" onerror="this.parentElement.style.display='none'">
+        <div class="gallery-item" onclick="openModal('${src.replace(/'/g, "'")}')">
+          <img src="${src}" alt="${img}" loading="lazy" onerror="this.style.border='2px solid red'; this.style.minHeight='40px';">
           <div class="img-name">${img}</div>
         </div>`;
     });
