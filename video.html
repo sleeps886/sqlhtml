@@ -3,670 +3,483 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视频教程 - SQL/DBA 基础教程</title>
+<title>B站 DBA 视频课程播放页</title>
 <style>
 :root {
-  --bg: #f8f9fa;
-  --sidebar-bg: #1a1a2e;
-  --sidebar-text: #cdd6f4;
-  --sidebar-hover: #313154;
-  --accent: #4fc3f7;
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --text: #202532;
+  --muted: #687184;
+  --line: #e6eaf2;
+  --primary: #1f7ae0;
+  --primary-dark: #155fb2;
+  --sidebar: #151b28;
+  --sidebar-2: #20293b;
+  --sidebar-text: #dce5f5;
+  --shadow: 0 10px 30px rgba(31, 53, 85, 0.12);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
   background: var(--bg);
-  color: #333;
-  line-height: 1.7;
-  display: flex;
+  color: var(--text);
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
   min-height: 100vh;
 }
 
-/* ===== 侧边栏 ===== */
 .sidebar {
-  width: 260px; min-width: 260px;
-  background: var(--sidebar-bg); color: var(--sidebar-text);
-  position: fixed; top: 0; left: 0; bottom: 0;
-  overflow-y: auto; z-index: 100;
-  display: flex; flex-direction: column;
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  padding: 24px 18px;
 }
-.sidebar-header { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.sidebar-header h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-.sidebar-header .subtitle { font-size: 0.75rem; color: #888; margin-top: 4px; }
-.sidebar-nav { flex: 1; padding: 12px 0; }
-.sidebar-nav a {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 20px; color: var(--sidebar-text); text-decoration: none;
-  font-size: 0.88rem; transition: all 0.2s; border-left: 3px solid transparent;
+
+.brand {
+  padding: 4px 8px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-.sidebar-nav a:hover, .sidebar-nav a.active { background: var(--sidebar-hover); color: #fff; border-left-color: var(--accent); }
-.sidebar-nav a .icon { font-size: 1.1rem; width: 24px; text-align: center; }
-.sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.72rem; color: #666; }
 
-/* ===== 主内容区 ===== */
-.main { margin-left: 260px; flex: 1; padding: 20px 28px; max-width: 1520px; }
-
-/* ===== 视频播放 + 列表布局 ===== */
-.video-layout { display: flex; gap: 18px; align-items: flex-start; }
-
-/* 左侧播放器 */
-.video-player-section { flex: 1; min-width: 0; position: sticky; top: 20px; }
-.video-wrapper {
-  position: relative; padding-bottom: 56.25%; height: 0;
-  border-radius: 10px; overflow: hidden; background: #000;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+.brand h1 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: 0;
 }
-.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-.playing-info { margin-top: 12px; padding: 14px 18px; background: #fff; border-radius: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
-.playing-info h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; }
-.playing-info p { font-size: 0.82rem; color: #666; margin-top: 4px; }
 
-/* 右侧播放列表 */
-.playlist { width: 380px; flex-shrink: 0; background: #fff; border-radius: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); overflow: hidden; }
-.playlist-header {
-  padding: 14px 18px; background: #fafafa; border-bottom: 1px solid #eee;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 2;
+.brand p {
+  margin: 8px 0 0;
+  color: #9aa8bd;
+  font-size: 13px;
 }
-.playlist-header h3 { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; }
-.playlist-header .count { font-size: 0.75rem; color: #888; }
-.playlist-scroll { max-height: calc(100vh - 120px); overflow-y: auto; }
 
-/* 分组折叠 */
-.day-group { border-bottom: 1px solid #f0f0f0; }
-.day-group-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 18px; cursor: pointer; background: #fafbfc;
-  transition: background 0.15s; user-select: none;
-  position: sticky; top: 48px; z-index: 1;
+.nav {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
 }
-.day-group-header:hover { background: #f0f2f5; }
-.day-group-header .arrow { font-size: 0.7rem; transition: transform 0.2s; color: #999; }
-.day-group.open .day-group-header .arrow { transform: rotate(90deg); }
-.day-group-header .day-label { font-size: 0.82rem; font-weight: 700; color: #444; }
-.day-group-header .day-count { font-size: 0.72rem; color: #999; }
-.day-group-body { display: none; }
-.day-group.open .day-group-body { display: block; }
 
-/* 视频条目 */
-.vid-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 9px 18px 9px 28px; cursor: pointer; border-bottom: 1px solid #f8f8f8;
-  transition: background 0.12s;
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 9px 12px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
 }
-.vid-item:hover { background: #f8f9ff; }
-.vid-item.active { background: #eeefff; border-left: 3px solid #7c4dff; }
-.vid-item .vid-num {
-  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
-  background: #f0f0f5; border-radius: 5px; font-size: 0.72rem; font-weight: 700; color: #888; flex-shrink: 0;
+
+.nav a:hover,
+.nav a.active {
+  background: var(--sidebar-2);
+  color: #ffffff;
 }
-.vid-item.active .vid-num { background: #7c4dff; color: #fff; }
-.vid-item .vid-info { flex: 1; min-width: 0; }
-.vid-item .vid-title { font-size: 0.84rem; font-weight: 500; color: #333; line-height: 1.4; }
-.vid-item.active .vid-title { color: #7c4dff; font-weight: 600; }
-.vid-item .vid-duration { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
 
-.playlist-scroll::-webkit-scrollbar { width: 4px; }
-.playlist-scroll::-webkit-scrollbar-track { background: transparent; }
-.playlist-scroll::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
-
-/* 搜索框 */
-.playlist-search { padding: 10px 14px; border-bottom: 1px solid #eee; }
-.playlist-search input {
-  width: 100%; padding: 7px 12px; border: 1px solid #e0e0e0; border-radius: 6px;
-  font-size: 0.82rem; outline: none; transition: border 0.2s;
+.main {
+  padding: 24px;
 }
-.playlist-search input:focus { border-color: #7c4dff; }
 
-/* 响应式 */
-@media (max-width: 1100px) { .video-layout { flex-direction: column; } .playlist { width: 100%; } .playlist-scroll { max-height: 500px; } }
-@media (max-width: 768px) { .sidebar { width: 220px; min-width: 220px; } .main { margin-left: 220px; padding: 14px; } }
-@media (max-width: 600px) { body { flex-direction: column; } .sidebar { position: relative; width: 100%; min-width: 100%; max-height: 45vh; } .main { margin-left: 0; } }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.title-block h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.title-block p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.open-link:hover {
+  background: var(--primary-dark);
+}
+
+.player-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+.player-card,
+.playlist-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.player-card {
+  overflow: hidden;
+}
+
+.player-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.player-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.now-playing {
+  padding: 16px 18px 18px;
+  border-top: 1px solid var(--line);
+}
+
+.now-playing .eyebrow {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.now-playing h3 {
+  margin: 6px 0 8px;
+  font-size: 18px;
+}
+
+.now-playing p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.playlist-card {
+  overflow: hidden;
+  position: sticky;
+  top: 20px;
+}
+
+.playlist-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.playlist-head h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.playlist-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tools input,
+.tools select {
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0 10px;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+}
+
+.tools input:focus,
+.tools select:focus {
+  border-color: var(--primary);
+}
+
+.playlist {
+  max-height: calc(100vh - 214px);
+  overflow: auto;
+}
+
+.video-item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  border: 0;
+  border-bottom: 1px solid #f0f3f8;
+  background: #fff;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.video-item:hover {
+  background: #f7faff;
+}
+
+.video-item.active {
+  background: #eaf3ff;
+  border-left: 4px solid var(--primary);
+  padding-left: 12px;
+}
+
+.video-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  border-radius: 7px;
+  background: #eef2f7;
+  color: #516071;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.video-item.active .video-index {
+  background: var(--primary);
+  color: #fff;
+}
+
+.video-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.video-meta {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.empty {
+  padding: 28px 16px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 1180px) {
+  .player-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .playlist-card {
+    position: static;
+  }
+
+  .playlist {
+    max-height: 520px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+  }
+
+  .main {
+    padding: 16px;
+  }
+
+  .topbar {
+    display: grid;
+  }
+}
 </style>
 </head>
 <body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>SQL / DBA 学习站</h1>
+      <p>课程视频、资料和练习统一入口</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html">项目概览</a>
+      <a href="index.html#tasks">教程章节</a>
+      <a href="index.html#gallery">图片资源</a>
+      <a href="index.html#files">文件结构</a>
+      <a href="video.html" class="active">视频教程</a>
+    </nav>
+  </aside>
 
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <h2>📘 SQL / DBA 教程</h2>
-    <div class="subtitle">老男孩 · 深圳标杆班级</div>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="index.html"><span class="icon">🏠</span>项目概览</a>
-    <a href="index.html#tasks"><span class="icon">📚</span>教程章节</a>
-    <a href="index.html#gallery"><span class="icon">🖼️</span>图片资源</a>
-    <a href="index.html#files"><span class="icon">📁</span>文件结构</a>
-    <a href="video.html" class="active"><span class="icon">🎬</span>视频教程</a>
-  </nav>
-  <div class="sidebar-footer">DBA 运维工程师 · 深圳就业班</div>
-</aside>
-
-<main class="main">
-  <div class="video-layout">
-    <!-- 左侧：视频播放器 -->
-    <div class="video-player-section">
-      <div class="video-wrapper">
-        <iframe id="biliPlayer"
-          src="//player.bilibili.com/player.html?bvid=BV1KzDpYVEe9&page=1&high_quality=1"
-          allowfullscreen scrolling="no"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-presentation">
-        </iframe>
+  <main class="main">
+    <div class="topbar">
+      <div class="title-block">
+        <h2>DBA 数据库运维课程播放列表</h2>
+        <p>使用 B 站官方播放器嵌入播放，右侧列表支持搜索和快速跳转。</p>
       </div>
-      <div class="playing-info">
-        <h3 id="playingTitle">📺 day01-1 讲师简介和DBA行业认识</h3>
-        <p id="playingDesc">老男孩·深圳标杆班级 — DBA数据运维工程师就业班课程</p>
-      </div>
+      <a class="open-link" href="https://www.bilibili.com/video/BV15J41167Wp/" target="_blank" rel="noopener">在 B 站打开</a>
     </div>
 
-    <!-- 右侧：播放列表 -->
-    <div class="playlist">
-      <div class="playlist-header"><h3>📋 播放列表</h3><span class="count" id="playlistCount"></span></div>
-      <div class="playlist-search"><input type="text" id="searchInput" placeholder="🔍 搜索视频..." oninput="filterPlaylist()"></div>
-      <div class="playlist-scroll" id="playlistScroll"></div>
+    <div class="player-layout">
+      <section class="player-card">
+        <div class="player-wrap">
+          <iframe
+            id="biliPlayer"
+            src="https://player.bilibili.com/player.html?bvid=BV15J41167Wp&p=1&autoplay=0"
+            title="Bilibili video player"
+            scrolling="no"
+            allowfullscreen="true"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="now-playing">
+          <div class="eyebrow" id="nowMeta">正在播放 第 1 集 / 共 295 集</div>
+          <h3 id="nowTitle">第 001 集</h3>
+          <p>当前页面只嵌入 B 站官方播放器，不抓取和存储视频源文件。</p>
+        </div>
+      </section>
+
+      <aside class="playlist-card">
+        <div class="playlist-head">
+          <h3>播放列表</h3>
+          <p id="playlistSummary">共 295 集，当前第 1 集</p>
+        </div>
+        <div class="tools">
+          <input id="searchInput" type="search" placeholder="搜索集数，例如 17 或 授权">
+          <select id="jumpSelect" aria-label="快速跳转">
+            <option value="1">从第 1 集开始</option>
+            <option value="50">跳到第 50 集</option>
+            <option value="100">跳到第 100 集</option>
+            <option value="150">跳到第 150 集</option>
+            <option value="200">跳到第 200 集</option>
+            <option value="250">跳到第 250 集</option>
+          </select>
+        </div>
+        <div class="playlist" id="playlist"></div>
+      </aside>
     </div>
-  </div>
-</main>
+  </main>
+</div>
 
 <script>
-// ===== 视频数据 =====
-// bvid: B站BV号（默认使用合集 BV1KzDpYVEe9，有独立BV号可单独填写）
-const DEFAULT_BVID = 'BV1KzDpYVEe9';
+const BVID = 'BV15J41167Wp';
+const TOTAL = 295;
 
-const days = [
-  {
-    label: 'Day 01 · MySQL 入门与安装',
-    videos: [
-      {num:'01',title:'讲师简介和DBA行业认识',dur:'09:58'},
-      {num:'02',title:'典型的互联网电子商务平台数据库架构介绍',dur:'36:22'},
-      {num:'03',title:'数据库产品未来',dur:'05:33'},
-      {num:'04',title:'DBA的职业素养',dur:'42:26'},
-      {num:'05',title:'数据库产品介绍及MySQL版本选择',dur:'24:00'},
-      {num:'06',title:'MySQL二进制安装准备',dur:'19:05'},
-      {num:'07',title:'MySQL启动关闭(Sys-V与Systemd)',dur:'18:28'},
-      {num:'08',title:'分析及处理MySQL启动故障思路',dur:'08:31'},
-      {num:'09',title:'修改本地管理员密码',dur:'03:18'},
-      {num:'10',title:'忘记本地管理员用户密码处理方法',dur:'13:38'},
-      {num:'11',title:'MySQL CS及实例介绍',dur:'15:19'},
-      {num:'12',title:'mysqld处理SQL的过程-1',dur:'40:40'},
-      {num:'13',title:'mysqld处理SQL的过程-2',dur:'06:31'},
-      {num:'14',title:'数据存储物理结构及逻辑结构-2',dur:'20:26'},
-      {num:'15',title:'InnoDB段 区 页',dur:'15:23'},
-      {num:'16',title:'用户管理操作',dur:'13:02'},
-      {num:'17',title:'用户授权',dur:'10:17'},
-      {num:'18',title:'权限回收及面试问题',dur:'12:10'},
-      {num:'分享',title:'每天分享-day01-董豪',dur:'42:51'},
-    ]
-  },
-  {
-    label: 'Day 02 · 字符集、数据类型与DDL',
-    videos: [
-      {num:'01',title:'上集回顾',dur:'44:21'},
-      {num:'02',title:'MySQL的启停',dur:'11:14'},
-      {num:'03',title:'初始化配置介绍',dur:'17:27'},
-      {num:'04',title:'初始化配置应用',dur:'13:04'},
-      {num:'05',title:'客户端工具使用',dur:'13:34'},
-      {num:'06',title:'多实例管理',dur:'11:50'},
-      {num:'07',title:'mysql命令内置功能介绍',dur:'14:03'},
-      {num:'08',title:'字符集及校对规则',dur:'27:12'},
-      {num:'09',title:'数据类型',dur:'30:42'},
-      {num:'10',title:'DDL-库定义',dur:'15:49'},
-      {num:'11',title:'DDL-库定义规范',dur:'13:51'},
-      {num:'12',title:'DDL-表定义工具操作及列属性说明',dur:'22:07'},
-      {num:'13',title:'DDL-手撕建表语句',dur:'10:59'},
-      {num:'14',title:'DDL-建表规范',dur:'12:37'},
-      {num:'15',title:'DDL-表定义修改',dur:'28:43'},
-      {num:'16',title:'DML-insert应用',dur:'11:43'},
-      {num:'分享',title:'每日分享-day2-邝志成',dur:'34:57'},
-    ]
-  },
-  {
-    label: 'Day 03 · DQL 查询与多表连接',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'38:42'},
-      {num:'02',title:'DQL-基本介绍',dur:'11:30'},
-      {num:'03',title:'DQL-学习环境介绍',dur:'18:24'},
-      {num:'04',title:'DQL-select配合from的使用',dur:'11:46'},
-      {num:'05',title:'DQL-select配合where基本使用-1',dur:'12:54'},
-      {num:'06',title:'DQL-select配合where基本使用-2',dur:'14:53'},
-      {num:'07',title:'DQL-select配合group by及聚合函数使用-1',dur:'16:11'},
-      {num:'08',title:'DQL-select配合group by及聚合函数使用-2',dur:'08:03'},
-      {num:'09',title:'DQL-select配合group by及聚合函数使用-3',dur:'06:58'},
-      {num:'10',title:'DQL-select配合orderby,limit应用',dur:'17:07'},
-      {num:'11',title:'DQL-select综合练习题',dur:'05:16'},
-      {num:'12',title:'DQL-select单表查询子句小结',dur:'22:24'},
-      {num:'13',title:'DQL-select多表连接语法要求',dur:'22:44'},
-      {num:'14',title:'DQL-select多表连接练习-1',dur:'18:33'},
-      {num:'15',title:'DQL-select多表连接练习-2',dur:'18:03'},
-      {num:'16',title:'DQL-select多表连接练习-3',dur:'19:42'},
-      {num:'17',title:'DQL-select别名应用-3',dur:'05:23'},
-    ]
-  },
-  {
-    label: 'Day 04 · 元数据、索引与执行计划',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'52:38'},
-      {num:'02',title:'上节回顾-2',dur:'07:49'},
-      {num:'03',title:'元数据获取-information_schema.tables基础应用',dur:'34:40'},
-      {num:'04',title:'information_schema配合concat拼接语句',dur:'12:09'},
-      {num:'05',title:'information_schema配合concat拼接语句-2',dur:'03:30'},
-      {num:'06',title:'show语句介绍',dur:'09:36'},
-      {num:'07',title:'索引介绍及B树索引算法说明',dur:'34:07'},
-      {num:'08',title:'聚集索引和辅助索引功能对比',dur:'33:13'},
-      {num:'09',title:'聚集索引和辅助索引区别及索引树高度',dur:'35:06'},
-      {num:'10',title:'索引的操作命令',dur:'19:29'},
-      {num:'11',title:'压力测试准备',dur:'05:52'},
-      {num:'12',title:'执行计划分析-1',dur:'44:47'},
-      {num:'13',title:'压力测试结果',dur:'03:23'},
-    ]
-  },
-  {
-    label: 'Day 05 · 索引优化与存储引擎',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'25:17'},
-      {num:'02',title:'如何计算执行计划key_len',dur:'31:01'},
-      {num:'03',title:'联合索引优化细节',dur:'47:32'},
-      {num:'04',title:'执行计划分析-extra',dur:'06:20'},
-      {num:'05',title:'关于索引优化小案例',dur:'11:32'},
-      {num:'06',title:'索引应用规范',dur:'33:09'},
-      {num:'07',title:'各种存储引擎特性真实案例',dur:'29:45'},
-      {num:'08',title:'各种存储引擎特性真实案例-2',dur:'10:45'},
-    ]
-  },
-  {
-    label: 'Day 06 · InnoDB 存储与事务ACID',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'23:05'},
-      {num:'02',title:'上节回顾-2',dur:'10:50'},
-      {num:'03',title:'查看及修改',dur:'22:00'},
-      {num:'04',title:'InnoDB物理存储结构',dur:'01:11:20'},
-      {num:'05',title:'生产案例介绍',dur:'29:46'},
-      {num:'06',title:'事务的ACID介绍',dur:'14:08'},
-      {num:'07',title:'事务的控制语句',dur:'17:47'},
-      {num:'08',title:'事务隐式提交情况',dur:'04:10'},
-      {num:'09',title:'事务ACID特性-redo',dur:'57:59'},
-      {num:'10',title:'事务ACID特性-redo再次说明',dur:'05:52'},
-      {num:'11',title:'事务ACID特性-redo+undo配合工作完成CSR过程',dur:'27:28'},
-      {num:'12',title:'事务ACID特性-锁的简介',dur:'14:40'},
-      {num:'13',title:'事务ACID特性-隔离级别-脏读,不可重复读',dur:'27:26'},
-      {num:'14',title:'事务ACID特性-隔离级别-幻读',dur:'18:22'},
-    ]
-  },
-  {
-    label: 'Day 07 · 日志管理与二进制日志',
-    videos: [
-      {num:'上节',title:'上节回顾',dur:'59:12'},
-      {num:'续',title:'RR模式幻读模拟',dur:'06:11'},
-      {num:'参续',title:'InnoDB核心参数说明',dur:'48:39'},
-      {num:'01',title:'日志管理-错误日志',dur:'11:19'},
-      {num:'02',title:'日志管理-二进制日志介绍及开启',dur:'12:38'},
-      {num:'03',title:'日志管理-二进制日志记录了什么',dur:'17:57'},
-      {num:'04',title:'日志管理-二进制日志的事件介绍',dur:'07:58'},
-      {num:'05',title:'日志管理-二进制日志的事件及内容查看,简单截取',dur:'28:52'},
-      {num:'06',title:'日志管理-二进制日志恢复案例',dur:'29:15'},
-      {num:'07',title:'日志管理-二进制日志-gtid模式的应用',dur:'28:57'},
-      {num:'08',title:'日志管理-slowlog-介绍及配置',dur:'21:38'},
-      {num:'09',title:'日志管理-slowlog-分析',dur:'11:33'},
-    ]
-  },
-  {
-    label: 'Day 08 · 备份恢复 - mysqldump',
-    videos: [
-      {num:'01',title:'上节回顾+补充-1',dur:'26:32'},
-      {num:'02',title:'上节回顾+补充-2',dur:'37:25'},
-      {num:'03',title:'DBA在备份恢复时的职责',dur:'39:44'},
-      {num:'04',title:'mysqldump基础参数说明',dur:'13:37'},
-      {num:'05',title:'mysqldump特殊参数-1',dur:'04:54'},
-      {num:'06',title:'mysqldump特殊参数-2',dur:'19:29'},
-      {num:'07',title:'mysqldump故障模拟恢复',dur:'28:34'},
-      {num:'08',title:'mysqldump故障模拟恢复案例',dur:'21:05'},
-      {num:'09',title:'mysqldump扩展参数介绍',dur:'10:29'},
-      {num:'10',title:'XBK备份理念',dur:'11:32'},
-    ]
-  },
-  {
-    label: 'Day 09 · XBK 备份与迁移',
-    videos: [
-      {num:'01',title:'上节回顾+补充',dur:'23:12'},
-      {num:'02',title:'上节回顾+补充-2',dur:'07:26'},
-      {num:'03',title:'XBK备份文件查看',dur:'23:58'},
-      {num:'04',title:'XBK全备+增量故障演练环境模拟',dur:'30:32'},
-      {num:'05',title:'XBK全备+增量+binlog恢复演练',dur:'36:24'},
-      {num:'06',title:'XBK扩展-单表恢复思路',dur:'12:21'},
-      {num:'07',title:'5.6迁移至5.7-mysqldump',dur:'40:08'},
-    ]
-  },
-  {
-    label: 'Day 10 · 主从复制',
-    videos: [
-      {num:'00',title:'上节回顾',dur:'32:21'},
-      {num:'01',title:'高可用产品介绍',dur:'10:51'},
-      {num:'02',title:'主从复制前提',dur:'27:00'},
-      {num:'03',title:'主从复制搭建',dur:'39:09'},
-      {num:'04',title:'主从复制工作原理',dur:'47:00'},
-      {num:'05',title:'主从复制监控',dur:'18:34'},
-      {num:'06',title:'主从故障分析',dur:'14:31'},
-      {num:'07',title:'主从故障分析-2',dur:'48:33'},
-      {num:'08',title:'主从延时-主库原因',dur:'17:06'},
-      {num:'09',title:'主从延时-从库原因',dur:'41:40'},
-      {num:'10',title:'主从延时-监控方法',dur:'09:04'},
-    ]
-  },
-  {
-    label: 'Day 11 · 延时从库、GTID与MHA',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'41:59'},
-      {num:'02',title:'延时从库配置',dur:'16:22'},
-      {num:'03',title:'延时从库逻辑故障处理',dur:'31:24'},
-      {num:'04',title:'快速恢复测试环境',dur:'05:27'},
-      {num:'05',title:'过滤复制应用',dur:'17:22'},
-      {num:'06',title:'gtid搭建过程',dur:'16:15'},
-      {num:'07',title:'gtid与传统复制的区别',dur:'12:29'},
-      {num:'08',title:'把同步复制',dur:'17:18'},
-      {num:'09',title:'MHA搭建过程',dur:'11:37'},
-      {num:'10',title:'MHA搭建过程细节介绍',dur:'01:01:18'},
-      {num:'11',title:'MHA Failover过程引入',dur:'26:31'},
-      {num:'12',title:'MHA Failover过程详解',dur:'41:16'},
-      {num:'13',title:'MHA 应用透明-vip功能',dur:'19:37'},
-      {num:'14',title:'MHA 应用透明-邮件提醒',dur:'09:03'},
-      {num:'15',title:'MHA 应用透明-binlogserver',dur:'10:20'},
-      {num:'16',title:'MHA 故障修复过程',dur:'09:40'},
-      {num:'17',title:'MHA emai修复',dur:'04:04'},
-    ]
-  },
-  {
-    label: 'Day 12 · MHA+Atlas 与 Mycat 中间件',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'50:00'},
-      {num:'02',title:'MHA+Atlas配置及读写分离测试',dur:'40:45'},
-      {num:'03',title:'MHA+Atlas授权用户',dur:'05:12'},
-      {num:'04',title:'MHA+Atlas管理操作',dur:'11:31'},
-      {num:'05',title:'企业分布式解决方案介绍',dur:'16:26'},
-      {num:'06',title:'Mycat基础架构介绍',dur:'07:13'},
-      {num:'07',title:'Mycat基础环境准备',dur:'13:39'},
-      {num:'08',title:'MySQL数据库架构演变',dur:'17:56'},
-      {num:'09',title:'Mycat介绍',dur:'22:14'},
-      {num:'10',title:'Mycat配置文件介绍及读写分离配置',dur:'20:51'},
-      {num:'11',title:'Mycat读写分离+高可用',dur:'15:23'},
-      {num:'12',title:'Mycat垂直分表',dur:'15:47'},
-      {num:'13',title:'Mycat参数说明',dur:'08:30'},
-      {num:'14',title:'Mycat-范围分片',dur:'22:01'},
-      {num:'15',title:'Mycat-取模和枚举分片',dur:'17:39'},
-    ]
-  },
-  {
-    label: 'Day 13 · MySQL 性能优化',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'28:36'},
-      {num:'02',title:'优化哲学',dur:'24:11'},
-      {num:'03',title:'top-cpu的指标',dur:'39:10'},
-      {num:'04',title:'top-mem-io指标',dur:'14:40'},
-      {num:'05',title:'MySQL整体优化思路介绍',dur:'03:53'},
-      {num:'06',title:'MySQL硬件了解',dur:'27:01'},
-      {num:'07',title:'MySQL OS层面优化建议',dur:'08:24'},
-      {num:'08',title:'MySQL 参数优化-1',dur:'20:51'},
-      {num:'09',title:'MySQL 参数优化-2',dur:'13:10'},
-      {num:'10',title:'MySQL 参数优化-3',dur:'08:37'},
-      {num:'11',title:'MySQL 参数优化-4',dur:'30:17'},
-    ]
-  },
-  {
-    label: 'Day 14 · 锁问题与 MongoDB 入门',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'55:34'},
-      {num:'02',title:'锁问题的排查过程-1',dur:'34:03'},
-      {num:'03',title:'锁问题的排查过程-2',dur:'16:00'},
-      {num:'04',title:'主从优化建议',dur:'21:45'},
-      {num:'05',title:'NoSQL-Mongodb介绍',dur:'34:11'},
-      {num:'06',title:'NoSQL-Mongodb安装部署',dur:'13:34'},
-      {num:'07',title:'NoSQL-Mongodb配置文件使用及连接',dur:'11:56'},
-      {num:'08',title:'NoSQL-Mongodb基础操作介绍',dur:'45:26'},
-      {num:'09',title:'NoSQL-Mongodb用户权限管理-管理员用户',dur:'22:23'},
-      {num:'10',title:'NoSQL-Mongodb用户权限管理-管理员用户-2',dur:'16:40'},
-      {num:'11',title:'NoSQL-Mongodb-RS介绍及搭建',dur:'32:50'},
-      {num:'12',title:'NoSQL-Mongodb-RS节点添加及删除',dur:'07:28'},
-      {num:'13',title:'NoSQL-Mongodb-RS特殊从节点',dur:'14:16'},
-      {num:'14',title:'NoSQL-Mongodb-sharding cluster 搭建过程',dur:'09:51'},
-    ]
-  },
-  {
-    label: 'Day 15 · MongoDB 分片与备份',
-    videos: [
-      {num:'01',title:'上节回顾',dur:'42:15'},
-      {num:'02',title:'Mongodb-shardingCluster架构说明',dur:'19:57'},
-      {num:'03',title:'Mongodb-shardingCluster启动',dur:'14:52'},
-      {num:'04',title:'Mongodb-shardingCluster功能介绍',dur:'21:38'},
-      {num:'05',title:'Mongodb-shardingCluster-range分片功能',dur:'09:22'},
-      {num:'06',title:'Mongodb-shardingCluster-hash分片功能',dur:'10:03'},
-      {num:'07',title:'Mongodb-shardingCluster-管理性操作',dur:'16:41'},
-      {num:'08',title:'Mongodb-备份工具介绍',dur:'09:23'},
-      {num:'09',title:'Mongodb-imp与exp应用',dur:'26:09'},
-      {num:'10',title:'Mongodb-imp与exp实现MySQL到MongoDB迁移项目',dur:'11:04'},
-      {num:'11',title:'Mongodb-dump和restore的基本应用',dur:'30:46'},
-      {num:'12',title:'Mongodb-dump和restore的高级应用-oplog介绍',dur:'25:46'},
-      {num:'13',title:'Mongodb-dump和restore-oplog高级应用翻车',dur:'21:54'},
-      {num:'14',title:'Mongodb-dump和restore-oplog高级应用',dur:'13:20'},
-      {num:'15',title:'Mongodb-dump和restore-集群备份思路',dur:'07:52'},
-    ]
-  },
-  {
-    label: 'Day 16 · Docker 容器化',
-    videos: [
-      {num:'补',title:'CDN知识补充',dur:'24:40'},
-      {num:'Deb1',title:'debian介绍',dur:'04:27'},
-      {num:'Deb2',title:'debian系统操作演示',dur:'01:15:32'},
-      {num:'01',title:'上节回顾',dur:'19:25'},
-      {num:'02',title:'云计算-Docker前世今生',dur:'45:44'},
-      {num:'03',title:'云计算-Docker管理-镜像基础管理',dur:'34:08'},
-      {num:'04',title:'云计算-Docker管理-镜像基础管理-1',dur:'05:09'},
-      {num:'05',title:'云计算-Docker管理-镜像基础管理-2',dur:'17:12'},
-      {num:'06',title:'云计算-Docker管理-容器功能初体验',dur:'26:39'},
-      {num:'07',title:'云计算-Docker管理-容器应用场景',dur:'17:01'},
-      {num:'08',title:'云计算-Docker管理-容器启动关闭及连接',dur:'13:25'},
-      {num:'09',title:'云计算-Docker管理-容器网络映射',dur:'55:44'},
-      {num:'10',title:'云计算-Docker管理-容器网络映射-2',dur:'03:31'},
-      {num:'11',title:'云计算-Docker管理-数据卷使用',dur:'59:53'},
-      {num:'12',title:'云计算-Docker管理-数据卷容器的使用',dur:'18:26'},
-      {num:'13',title:'云计算-Docker管理-本地yum源配置',dur:'09:35'},
-      {num:'14',title:'云计算-Docker管理-本地yum源配置-2',dur:'04:39'},
-    ]
-  },
-  {
-    label: 'Day 17 · Docker 镜像与 Dockerfile',
-    videos: [
-      {num:'01',title:'Docker-上节回顾',dur:'52:11'},
-      {num:'02',title:'Docker-镜像制作',dur:'01:07:28'},
-      {num:'03',title:'Docker-镜像制作-LAMP-1',dur:'40:22'},
-      {num:'04',title:'Docker-镜像制作-LAMP+bbs',dur:'18:36'},
-      {num:'05',title:'Docker-镜像制作--3',dur:'09:59'},
-      {num:'06',title:'Docker-镜像制作-dockerfile 基础应用',dur:'54:36'},
-      {num:'07',title:'Docker-镜像制作-dockerfile-常用指令-1',dur:'46:45'},
-      {num:'08',title:'Docker-镜像制作-dockerfile-常用指令-2',dur:'24:36'},
-      {num:'09',title:'Docker-镜像制作-dockerfile-常用指令-3',dur:'06:03'},
-    ]
-  },
-  {
-    label: 'Day 18 · Docker 网络、K8s 与 ELK',
-    videos: [
-      {num:'01',title:'Docker-上节回顾',dur:'31:58'},
-      {num:'02',title:'Docker-registry配置应用',dur:'19:08'},
-      {num:'03',title:'Docker-registry带有密码验证',dur:'24:37'},
-      {num:'04',title:'Docker-habor实现图形化镜像仓库',dur:'23:16'},
-      {num:'05',title:'Docker-网络模型',dur:'40:52'},
-      {num:'06',title:'Docker-网络模型-2',dur:'31:49'},
-      {num:'07',title:'Docker-网络模型-3',dur:'26:02'},
-      {num:'08',title:'K8s安装部署',dur:'33:52'},
-      {num:'09',title:'K8s简介及体系结构介绍',dur:'48:50'},
-      {num:'10',title:'K8s-第一个pod创建及故障处理',dur:'40:52'},
-      {num:'11',title:'K8s-第一个pod应用详解',dur:'23:40'},
-      {num:'12',title:'K8s-RC应用详解',dur:'49:33'},
-      {num:'13',title:'K8s-deployment和SVC',dur:'40:23'},
-      {num:'14',title:'K8s-PV的应用',dur:'16:30'},
-      {num:'15',title:'K8s-PVC的应用',dur:'07:42'},
-      {num:'16',title:'K8s-wordpress项目-1',dur:'46:50'},
-      {num:'17',title:'K8s-wordpress项目-2',dur:'23:32'},
-      {num:'18',title:'K8s-dashboard',dur:'18:14'},
-      {num:'19',title:'K8s-dashboard+监控',dur:'02:49'},
-    ]
-  },
-  {
-    label: 'ELK 日志收集专题',
-    videos: [
-      {num:'01',title:'ELK收集日志介绍',dur:'09:38'},
-      {num:'02',title:'ELK简单收集Nginx日志',dur:'01:15:18'},
-      {num:'03',title:'ELK收集Nginx的JSON日志',dur:'01:07:55'},
-      {num:'04',title:'ELK收集Nginx正常日志和错误日志',dur:'36:53'},
-      {num:'05',title:'ELK收集tomcat日志',dur:'18:21'},
-      {num:'06',title:'收集java多行日志',dur:'30:45'},
-      {num:'07',title:'收集docker日志',dur:'36:56'},
-      {num:'08',title:'根据服务类型收集多个容器日志',dur:'28:20'},
-      {num:'09',title:'ELK知识回顾',dur:'08:37'},
-      {num:'10',title:'ELK-filebeat模块收集nginx普通日志',dur:'47:05'},
-      {num:'11',title:'kibana画图准备日志数据',dur:'17:54'},
-      {num:'12',title:'kibana画图举例',dur:'31:25'},
-      {num:'13',title:'使用redis作为缓存收集日志',dur:'57:28'},
-      {num:'14',title:'kibana的x-pack监控开启',dur:'15:51'},
-      {num:'15',title:'使用kafka缓存日志',dur:'31:48'},
-      {num:'16',title:'日志收集终极架构',dur:'36:17'},
-      {num:'17',title:'如何在公司推广ELK以及沟通交流',dur:'19:15'},
-      {num:'18',title:'ELK答疑总结回顾',dur:'13:33'},
-    ]
-  },
-  {
-    label: 'Tomcat 专题',
-    videos: [
-      {num:'01',title:'tomcat简介',dur:'09:46'},
-      {num:'02',title:'tomcat安装部署测试关闭',dur:'20:14'},
-      {num:'03',title:'tomcat管理页面',dur:'08:24'},
-      {num:'04',title:'tomcat部署简单页面',dur:'16:05'},
-      {num:'05',title:'tomcat部署jpress准备工作',dur:'21:22'},
-      {num:'06',title:'tomcat部署jpress上传测试',dur:'05:25'},
-      {num:'07',title:'zabbix监控tomcat的java',dur:'27:58'},
-      {num:'08',title:'nginx反向代理tomcat',dur:'13:25'},
-      {num:'09',title:'tomcat监控和优化',dur:'11:53'},
-    ]
-  },
-  {
-    label: '阿里云实战',
-    videos: [
-      {num:'01',title:'阿里云介绍以及购买',dur:'01:13:13'},
-      {num:'02',title:'阿里云RDS服务',dur:'01:10:43'},
-      {num:'03',title:'阿里云安装wordpress',dur:'14:01'},
-      {num:'04',title:'阿里云NAS创建',dur:'16:03'},
-      {num:'05',title:'阿里云自定义镜像创建实例',dur:'14:51'},
-      {num:'06',title:'阿里云SLB服务',dur:'16:26'},
-    ]
-  },
-  {
-    label: '就业指导与架构',
-    videos: [
-      {num:'01',title:'运维发展和公司选择',dur:'01:02:24'},
-      {num:'02',title:'面试流程和注意事项',dur:'01:18:21'},
-      {num:'03',title:'面试套路回答以及常问问题',dur:'50:08'},
-      {num:'04',title:'初入公司',dur:'08:07'},
-      {num:'05',title:'物理服务器知识1',dur:'52:56'},
-      {num:'06',title:'物理服务器知识以及IDC机房流程',dur:'46:27'},
-      {num:'07',title:'中小企业架构发展',dur:'36:27'},
-      {num:'08',title:'中小企业架构发展完结',dur:'01:10:49'},
-      {num:'09',title:'运维求职心态套路',dur:'51:56'},
-      {num:'10',title:'后台开发架构简介',dur:'01:05:36'},
-      {num:'11',title:'经验分享',dur:'07:11'},
-      {num:'12',title:'就业指导-1',dur:'10:29'},
-      {num:'13',title:'开发优化和线上问题处理流程',dur:'58:40'},
-    ]
-  },
-  {
-    label: '数据结构与算法',
-    videos: [
-      {num:'01',title:'数据结构概念',dur:'01:18:16'},
-      {num:'02',title:'数据结构面试题(链表相关)',dur:'17:49'},
-      {num:'03',title:'算法概念及排序算法',dur:'01:11:49'},
-      {num:'04',title:'算法面试题讲解',dur:'01:03:53'},
-    ]
-  }
-];
+const knownTitles = {
+  1: 'day01-1 讲师简介和 DBA 行业认识',
+  17: '用户授权',
+  18: '权限回收及面试问题'
+};
 
-// 扁平化所有视频（附上分组信息）
-let allVideos = [];
-days.forEach((day, di) => {
-  day.videos.forEach((v, vi) => {
-    allVideos.push({ ...v, dayIdx: di, vidIdx: vi, dayLabel: day.label });
-  });
+const videos = Array.from({ length: TOTAL }, (_, index) => {
+  const page = index + 1;
+  return {
+    page,
+    title: knownTitles[page] || `第 ${String(page).padStart(3, '0')} 集`
+  };
 });
-const totalCount = allVideos.length;
 
-// ===== DOM 引用 =====
-const playlistScroll = document.getElementById('playlistScroll');
-const playlistCount = document.getElementById('playlistCount');
-const biliPlayer = document.getElementById('biliPlayer');
-const playingTitle = document.getElementById('playingTitle');
-const playingDesc = document.getElementById('playingDesc');
+let currentPage = 1;
 
-playlistCount.textContent = `共 ${totalCount} 集`;
+const player = document.getElementById('biliPlayer');
+const playlist = document.getElementById('playlist');
+const searchInput = document.getElementById('searchInput');
+const jumpSelect = document.getElementById('jumpSelect');
+const nowMeta = document.getElementById('nowMeta');
+const nowTitle = document.getElementById('nowTitle');
+const playlistSummary = document.getElementById('playlistSummary');
 
-// ===== 渲染 =====
-function renderPlaylist(filterText) {
-  playlistScroll.innerHTML = '';
-  const ft = (filterText || '').toLowerCase();
+function playerUrl(page) {
+  return `https://player.bilibili.com/player.html?bvid=${BVID}&p=${page}&autoplay=0`;
+}
 
-  days.forEach((day, di) => {
-    // 过滤
-    const matched = ft
-      ? day.videos.filter(v => v.title.toLowerCase().includes(ft) || v.num.toLowerCase().includes(ft) || day.label.toLowerCase().includes(ft))
-      : day.videos;
-    if (!matched.length) return;
+function play(page) {
+  currentPage = page;
+  const video = videos[page - 1];
+  player.src = playerUrl(page);
+  nowMeta.textContent = `正在播放 第 ${page} 集 / 共 ${TOTAL} 集`;
+  nowTitle.textContent = video.title;
+  playlistSummary.textContent = `共 ${TOTAL} 集，当前第 ${page} 集`;
+  renderList(searchInput.value);
+}
 
-    const group = document.createElement('div');
-    group.className = 'day-group open';
-
-    const header = document.createElement('div');
-    header.className = 'day-group-header';
-    header.innerHTML = `<span class="arrow">▶</span><span class="day-label">${day.label}</span><span class="day-count">(${matched.length}集)</span>`;
-    header.onclick = () => group.classList.toggle('open');
-
-    const body = document.createElement('div');
-    body.className = 'day-group-body';
-
-    day.videos.forEach((v, vi) => {
-      if (ft && !v.title.toLowerCase().includes(ft) && !v.num.toLowerCase().includes(ft) && !day.label.toLowerCase().includes(ft)) return;
-      const globalIdx = allVideos.findIndex(av => av.dayIdx === di && av.vidIdx === vi);
-      const item = document.createElement('div');
-      item.className = 'vid-item';
-      if (globalIdx === 0) item.classList.add('active');
-      item.onclick = () => switchVideo(globalIdx);
-      item.innerHTML = `
-        <div class="vid-num">${v.num}</div>
-        <div class="vid-info">
-          <div class="vid-title">${v.title}</div>
-          <div class="vid-duration">⏱ ${v.dur}</div>
-        </div>`;
-      body.appendChild(item);
-    });
-
-    group.appendChild(header);
-    group.appendChild(body);
-    playlistScroll.appendChild(group);
+function renderList(keyword = '') {
+  const value = keyword.trim().toLowerCase();
+  const matched = videos.filter(video => {
+    return !value ||
+      String(video.page).includes(value) ||
+      video.title.toLowerCase().includes(value);
   });
+
+  playlist.innerHTML = '';
+
+  if (!matched.length) {
+    playlist.innerHTML = '<div class="empty">没有找到匹配的视频</div>';
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  matched.forEach(video => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `video-item${video.page === currentPage ? ' active' : ''}`;
+    button.innerHTML = `
+      <span class="video-index">P${video.page}</span>
+      <span>
+        <span class="video-title">${video.title}</span>
+        <span class="video-meta">BV15J41167Wp · 第 ${video.page} 集</span>
+      </span>
+    `;
+    button.addEventListener('click', () => play(video.page));
+    fragment.appendChild(button);
+  });
+
+  playlist.appendChild(fragment);
 }
 
-function switchVideo(index) {
-  const v = allVideos[index];
-  const bvid = v.bvid || DEFAULT_BVID;
-  const page = v.page || 1;
-  biliPlayer.src = `//player.bilibili.com/player.html?bvid=${bvid}&page=${page}&high_quality=1`;
-  playingTitle.textContent = `📺 ${v.dayLabel.split('·')[0].trim()} - ${v.title}`;
-  playingDesc.textContent = v.dayLabel + '  |  ⏱ ' + v.dur;
-  // 更新高亮
-  document.querySelectorAll('.vid-item').forEach((el, i) => el.classList.toggle('active', i === index));
-}
+searchInput.addEventListener('input', () => renderList(searchInput.value));
+jumpSelect.addEventListener('change', event => {
+  play(Number(event.target.value));
+  playlist.scrollTop = 0;
+});
 
-function filterPlaylist() {
-  const ft = document.getElementById('searchInput').value;
-  renderPlaylist(ft);
-}
-
-// ===== 初始化 =====
-renderPlaylist();
+renderList();
 </script>
-
 </body>
 </html>
