@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL 基础教程 - Team Learning SQL</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+/* ===== 全局样式 ===== */
+:root {
+  --bg: #f8f9fa;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-text: #cdd6f4;
+  --sidebar-hover: #313154;
+  --accent: #4fc3f7;
+  --accent2: #7c4dff;
+  --card-bg: #ffffff;
+  --text: #333;
+  --border: #e0e0e0;
+  --tag-bg: #e8f5e9;
+  --tag-text: #2e7d32;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+.sidebar-header .subtitle {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+}
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active {
+  background: var(--sidebar-hover);
+  color: #fff;
+  border-left-color: var(--accent);
+}
+.sidebar-nav a .icon {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 280px;
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1200px;
+}
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(127, 77, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  position: relative;
+}
+.hero p {
+  font-size: 1rem;
+  opacity: 0.85;
+  max-width: 600px;
+  position: relative;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 24px;
+  position: relative;
+}
+.stat-item { text-align: center; }
+.stat-item .num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.stat-item .label { font-size: 0.8rem; opacity: 0.7; }
+
+/* ===== 章节卡片 ===== */
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 40px 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.task-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+}
+.task-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.task-card .card-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.task-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #222;
+}
+.task-card p {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.6;
+}
+.task-card .tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.tag {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ===== 图片画廊 ===== */
+.gallery-section {
+  margin-top: 40px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.gallery-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e0e0e0;
+  aspect-ratio: 16/11;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.gallery-item:hover { transform: scale(1.03); }
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.gallery-item .img-name {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 20px 8px 6px;
+}
+
+/* ===== 图片弹窗 ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.modal.active { display: flex; }
+.modal img {
+  max-width: 92vw;
+  max-height: 92vh;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.modal-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.3); }
+
+/* ===== 内容阅读面板（右侧滑出） ===== */
+.content-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.content-overlay.active { display: block; opacity: 1; }
+
+.content-panel {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(820px, 92vw);
+  height: 100vh;
+  background: #fff;
+  z-index: 999;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.25);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.content-panel.active { transform: translateX(0); }
+
+.content-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fafafa;
+  flex-shrink: 0;
+}
+.content-panel-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.content-panel-header .task-badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #7c4dff;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.content-panel-close {
+  width: 36px; height: 36px;
+  border: none;
+  background: #eee;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: all 0.2s;
+}
+.content-panel-close:hover { background: #ddd; color: #111; }
+
+.content-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 36px;
+  scroll-behavior: smooth;
+}
+
+/* 加载和空状态 */
+.content-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #999;
+}
+.content-loading .spinner {
+  width: 40px; height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #7c4dff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.content-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: #c62828;
+}
+
+/* ===== 渲染后的 Markdown 样式 ===== */
+.markdown-body { color: #24292e; line-height: 1.75; }
+.markdown-body h1 {
+  font-size: 1.8rem; font-weight: 700;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eaecef;
+  color: #1a1a2e;
+}
+.markdown-body h2 {
+  font-size: 1.4rem; font-weight: 700;
+  margin: 32px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eaecef;
+  color: #1a1a2e;
+}
+.markdown-body h3 {
+  font-size: 1.15rem; font-weight: 700;
+  margin: 24px 0 10px;
+  color: #333;
+}
+.markdown-body h4 {
+  font-size: 1rem; font-weight: 700;
+  margin: 20px 0 8px;
+  color: #444;
+}
+.markdown-body p { margin: 0 0 14px; }
+.markdown-body ul, .markdown-body ol {
+  padding-left: 24px;
+  margin: 0 0 14px;
+}
+.markdown-body li { margin-bottom: 4px; }
+.markdown-body li > ul, .markdown-body li > ol { margin-top: 4px; margin-bottom: 0; }
+.markdown-body a {
+  color: #0366d6;
+  text-decoration: none;
+}
+.markdown-body a:hover { text-decoration: underline; }
+.markdown-body strong { font-weight: 700; color: #1a1a2e; }
+.markdown-body code {
+  background: #f0f0f5;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: "SF Mono", "Fira Code", Consolas, monospace;
+  color: #c7254e;
+}
+.markdown-body pre {
+  background: #1a1a2e;
+  color: #cdd6f4;
+  padding: 20px 24px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.markdown-body pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  border-radius: 0;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.9rem;
+}
+.markdown-body th, .markdown-body td {
+  border: 1px solid #dfe2e5;
+  padding: 10px 14px;
+  text-align: left;
+}
+.markdown-body th {
+  background: #f6f8fa;
+  font-weight: 700;
+}
+.markdown-body tr:nth-child(even) { background: #fafbfc; }
+.markdown-body blockquote {
+  border-left: 4px solid #7c4dff;
+  padding: 8px 18px;
+  margin: 14px 0;
+  background: #f8f7ff;
+  border-radius: 0 6px 6px 0;
+  color: #555;
+}
+.markdown-body hr {
+  border: none;
+  border-top: 2px solid #eaecef;
+  margin: 28px 0;
+}
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.markdown-body input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #7c4dff;
+}
+.markdown-body .task-list-item {
+  list-style: none;
+  margin-left: -20px;
+}
+
+/* ===== 文件树 ===== */
+.file-tree {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-top: 20px;
+}
+.file-tree summary {
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+.file-tree ul {
+  list-style: none;
+  padding-left: 20px;
+}
+.file-tree li {
+  padding: 4px 0;
+  font-size: 0.88rem;
+}
+.file-tree .folder { color: #e6a817; }
+.file-tree .file { color: #555; }
+.file-tree .md-file { color: #0366d6; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .sidebar { width: 240px; min-width: 240px; }
+  .main { margin-left: 240px; padding: 20px; }
+  .hero { padding: 32px 24px; }
+  .hero h1 { font-size: 1.5rem; }
+  .task-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+@media (max-width: 600px) {
+  body { flex-direction: column; }
+  .sidebar {
+    position: relative;
+    width: 100%; min-width: 100%;
+    max-height: 50vh;
+  }
+  .main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 侧边栏导航 ========== -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>📘 SQL 基础教程</h2>
+    <div class="subtitle">Team Learning SQL · DataWhale</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#overview" class="active"><span class="icon">🏠</span>项目概览</a>
+    <a href="#tasks"><span class="icon">📚</span>教程章节</a>
+    <a href="#gallery"><span class="icon">🖼️</span>图片资源</a>
+    <a href="#files"><span class="icon">📁</span>文件结构</a>
+  </nav>
+  <div class="sidebar-footer">
+    共 167 个文件 · 8 个教程 · 150 张图片
+  </div>
+</aside>
+
+<!-- ========== 主内容区 ========== -->
+<main class="main">
+
+  <!-- 简介 Hero -->
+  <section id="overview">
+    <div class="hero">
+      <h1>SQL 基础教程学习笔记</h1>
+      <p>基于《SQL基础教程 第2版》（作者：MICK），由 DataWhale 团队编写的协作学习课程。通过 MySQL 进行教学，涵盖从环境搭建到高级查询的完整 SQL 知识体系。</p>
+      <div class="stats">
+        <div class="stat-item"><div class="num">8</div><div class="label">教程章节</div></div>
+        <div class="stat-item"><div class="num">150</div><div class="label">配图资源</div></div>
+        <div class="stat-item"><div class="num">6</div><div class="label">图片分类</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 教程章节 -->
+  <section id="tasks">
+    <div class="section-title">📚 教程章节</div>
+    <div class="task-grid" id="taskGrid"></div>
+  </section>
+
+  <!-- 图片画廊 -->
+  <section id="gallery" class="gallery-section">
+    <div class="section-title">🖼️ 教程配图资源</div>
+    <div id="galleryContainer"></div>
+  </section>
+
+  <!-- 文件结构 -->
+  <section id="files">
+    <div class="section-title">📁 项目文件结构</div>
+    <div class="file-tree" id="fileTree"></div>
+  </section>
+
+</main>
+
+<!-- 图片弹窗 -->
+<div class="modal" id="imgModal" onclick="closeModal()">
+  <button class="modal-close">&times;</button>
+  <img id="modalImg" src="" alt="放大预览">
+</div>
+
+<!-- 内容阅读面板 -->
+<div class="content-overlay" id="contentOverlay" onclick="closeContent()"></div>
+<div class="content-panel" id="contentPanel">
+  <div class="content-panel-header">
+    <h2 id="contentTitle">📄 章节内容</h2>
+    <button class="content-panel-close" onclick="closeContent()" title="关闭">&times;</button>
+  </div>
+  <div class="content-panel-body" id="contentBody">
+    <div class="content-loading"><div class="spinner"></div>加载中...</div>
+  </div>
+</div>
+
+<script>
+// ===== 章节数据 =====
+const tasks = [
+  {
+    num: "Task 00",
+    title: "绪论 - 环境搭建",
+    desc: "MySQL 8.0 的安装配置，连接数据库并执行第一条 SQL 查询，为后续学习做好准备。",
+    tags: ["环境搭建", "MySQL安装", "入门"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task00：绪论 - 环境搭建.md"
+  },
+  {
+    num: "Task 01",
+    title: "初识数据库",
+    desc: "数据库基本概念介绍，DBMS 的种类与特点，SQL 语言基础及数据库、表的创建操作。",
+    tags: ["数据库基础", "SQL入门", "DDL"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task01：初识数据库.md"
+  },
+  {
+    num: "Task 02",
+    title: "基础查询与排序",
+    desc: "SELECT 语句基础、算术/比较/逻辑运算符、聚合查询、分组操作及 HAVING 条件过滤。",
+    tags: ["SELECT", "聚合函数", "GROUP BY", "HAVING"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task02：基础查询与排序.md"
+  },
+  {
+    num: "Task 03",
+    title: "复杂一点的查询",
+    desc: "视图的创建与使用、子查询、多种内置函数、谓词及 CASE 表达式的灵活运用。",
+    tags: ["视图", "子查询", "函数", "CASE"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task03：复杂一点的查询.md"
+  },
+  {
+    num: "Task 04",
+    title: "集合运算",
+    desc: "表的加减法操作（UNION/EXCEPT/INTERSECT）及各种 JOIN 连结查询的详细讲解。",
+    tags: ["集合运算", "JOIN", "UNION", "连结"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task04：集合运算.md"
+  },
+  {
+    num: "Task 05",
+    title: "SQL高级处理",
+    desc: "窗口函数（RANK/DENSE_RANK/ROW_NUMBER）、移动平均计算及 GROUPING 运算符。",
+    tags: ["窗口函数", "OLAP", "高级查询"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task05：SQL高级处理.md"
+  },
+  {
+    num: "Task 06",
+    title: "综合练习",
+    desc: "LeetCode 练习题及大厂面试真题，巩固所学知识，轻松应对初级 SQL 面试。",
+    tags: ["练习", "面试", "实战"],
+    file: "ser/team-learning-sql-main/team-learning-sql-main/Task06：综合练习.md"
+  }
+];
+
+// ===== 渲染任务卡片 =====
+const taskGrid = document.getElementById('taskGrid');
+tasks.forEach((task, i) => {
+  const card = document.createElement('div');
+  card.className = 'task-card';
+  card.onclick = () => openContent(task);
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="card-num">${task.num}</span>
+    </div>
+    <h3>${task.title}</h3>
+    <p>${task.desc}</p>
+    <div class="tags">${task.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+  `;
+  taskGrid.appendChild(card);
+});
+
+// ===== 内容面板控制 =====
+const contentPanel = document.getElementById('contentPanel');
+const contentOverlay = document.getElementById('contentOverlay');
+const contentTitle = document.getElementById('contentTitle');
+const contentBody = document.getElementById('contentBody');
+
+function openContent(task) {
+  // 显示面板
+  contentPanel.classList.add('active');
+  contentOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // 设置标题
+  contentTitle.innerHTML = `<span class="task-badge">${task.num}</span> ${task.title}`;
+
+  // 显示加载状态
+  contentBody.innerHTML = '<div class="content-loading"><div class="spinner"></div><p>正在加载教程内容...</p></div>';
+
+  // 拉取 Markdown 文件
+  fetch(task.file)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.text();
+    })
+    .then(md => {
+      // 将 GitHub 图片链接替换为本地路径（如果本地存在对应章节的 img 目录）
+      // github URL 格式: https://github.com/datawhalechina/team-learning-sql/blob/main/img/chXX/xxx.png
+      let html = marked.parse(md);
+      // 渲染完成，写入面板
+      contentBody.innerHTML = `<div class="markdown-body">${html}</div>`;
+      // 滚动到顶部
+      contentBody.scrollTop = 0;
+    })
+    .catch(err => {
+      contentBody.innerHTML = `
+        <div class="content-error">
+          <p style="font-size:2rem;">😿</p>
+          <p><strong>加载失败</strong></p>
+          <p style="font-size:0.85rem;color:#888;">${err.message}</p>
+          <p style="margin-top:12px;">
+            <a href="${task.file}" target="_blank" style="color:#7c4dff;">👉 直接打开原始文件</a>
+          </p>
+        </div>`;
+    });
+}
+
+function closeContent() {
+  contentPanel.classList.remove('active');
+  contentOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ===== 图片数据 =====
+const imgBase = 'ser/team-learning-sql-main/team-learning-sql-main/img';
+const chapters = [
+  {
+    name: '封面 & 课程总图',
+    folder: '',
+    images: ['00 SQL基础课程.png']
+  },
+  {
+    name: 'Chapter 00 · 环境搭建',
+    folder: 'ch00',
+    images: Array.from({length: 76}, (_, i) => `ch00${String(i+1).padStart(2,'0')}.png`)
+  },
+  {
+    name: 'Chapter 01 · 初识数据库',
+    folder: 'ch01',
+    images: ['ch01.01系统结构.jpg', 'ch01.02表的示例.jpg', 'ch01.03商品表和列名对应关系.png', 'ch01.04习题1.png']
+  },
+  {
+    name: 'Chapter 02 · 基础查询与排序',
+    folder: 'ch02',
+    images: [
+      'ch02.01and.png', 'ch02.02or.png', 'ch02.03true.png', 'ch02.04true2.png',
+      'ch02.05true3.png', 'ch02.06cut.png', 'ch02.07groupby.png', 'ch02.08test26.png', 'ch02.09test27.png'
+    ]
+  },
+  {
+    name: 'Chapter 03 · 复杂查询',
+    folder: 'ch03',
+    images: ['ch03.01view.png', 'ch03.02view2.png', 'ch03.03view3.png', 'ch03.04view4.png', 'ch03.05result.png', 'ch03.06productsum.png', 'ch03.07productsum2.png', 'ch03.08productsumsrc.png', 'ch03.09case.png', 'ch03.10function.png', 'ch03.11casewhen1.png', 'ch03.12casewhen2.png']
+  },
+  {
+    name: 'Chapter 04 · 集合运算',
+    folder: 'ch04',
+    images: [
+      'ch04.01.png', 'ch04.02.png', 'ch04.03union.png', 'ch04.04result.png',
+      'ch04.05result2.png', 'ch04.06result3.png', 'ch04.07result4.png',
+      'ch04.08result5.png', 'ch04.09except.png', 'ch04.10.png', 'ch04.11.png',
+      'ch04.12.png', 'ch04.13join.png', 'ch04.14tb.png', 'ch04.15shopproduct.png',
+      'ch04.16tb73.png', 'ch04.17result.png', 'ch04.18result2.png', 'ch04.19result3.png',
+      'ch04.20.png', 'ch04.21.png', 'ch04.22.png', 'ch04.23.png', 'ch04.24.png',
+      'ch04.25.png', 'ch04.26.png', 'ch04.27.png', 'ch04.28.png', 'ch04.29.png',
+      'ch04.30.png', 'ch04.31.png', 'ch04.32.png', 'ch04.33.png', 'ch04.34.png',
+      'ch04.35.png', 'ch04.36.png', 'ch04.37.png'
+    ]
+  },
+  {
+    name: 'Chapter 05 · SQL高级处理',
+    folder: 'ch05',
+    images: [
+      'ch0501.png', 'ch0502.png', 'ch0503.png', 'ch0504.png', 'ch0505.png',
+      'ch0506.png', 'ch0507.png', 'ch0508.png', 'ch0509.png', 'ch0510.png'
+    ]
+  }
+];
+
+// 图片数据已硬编码，直接渲染即可
+function scanImages() {
+  renderGallery();
+}
+
+// ===== 渲染画廊 =====
+function renderGallery() {
+  const container = document.getElementById('galleryContainer');
+  let html = '';
+  chapters.forEach(ch => {
+    if (!ch.images.length) return;
+    html += `<h3 style="margin:24px 0 12px;font-size:1.05rem;color:#444;">📂 ${ch.name} <span style="color:#999;font-size:0.8rem;">(${ch.images.length} 张)</span></h3>`;
+    html += '<div class="gallery-grid">';
+    ch.images.forEach(img => {
+      const src = ch.folder ? `${imgBase}/${ch.folder}/${img}` : `${imgBase}/${img}`;
+      html += `
+        <div class="gallery-item" onclick="openModal('${src}')">
+          <img src="${src}" alt="${img}" loading="lazy" onerror="this.parentElement.style.display='none'">
+          <div class="img-name">${img}</div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ===== 弹窗 =====
+function openModal(src) {
+  document.getElementById('modalImg').src = src;
+  document.getElementById('imgModal').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('imgModal').classList.remove('active');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeContent();
+  }
+});
+
+// ===== 文件树 =====
+const fileTree = document.getElementById('fileTree');
+const treeData = {
+  '📁 ser': {
+    '📁 team-learning-sql-main': {
+      '📁 team-learning-sql-main': {
+        '📄 README.md': 'ser/team-learning-sql-main/team-learning-sql-main/README.md',
+        '📄 Task00：绪论 - 环境搭建.md': tasks[0].file,
+        '📄 Task01：初识数据库.md': tasks[1].file,
+        '📄 Task02：基础查询与排序.md': tasks[2].file,
+        '📄 Task03：复杂一点的查询.md': tasks[3].file,
+        '📄 Task04：集合运算.md': tasks[4].file,
+        '📄 Task05：SQL高级处理.md': tasks[5].file,
+        '📄 Task06：综合练习.md': tasks[6].file,
+        '📁 img (150张图片)': {
+          '🖼 00 SQL基础课程.png': `${imgBase}/00 SQL基础课程.png`,
+          '📁 ch00 (76张)': Object.fromEntries(
+            Array.from({length: 76}, (_, i) => [`🖼 ch00${String(i+1).padStart(2,'0')}.png`, `${imgBase}/ch00/ch00${String(i+1).padStart(2,'0')}.png`])
+          ),
+          '📁 ch01 (4张)': Object.fromEntries(
+            chapters[2].images.map(i => [`🖼 ${i}`, `${imgBase}/ch01/${i}`])
+          ),
+          '📁 ch02 (9张)': Object.fromEntries(
+            chapters[3].images.map(i => [`🖼 ${i}`, `${imgBase}/ch02/${i}`])
+          ),
+          '📁 ch03 (12张)': Object.fromEntries(
+            chapters[4].images.map(i => [`🖼 ${i}`, `${imgBase}/ch03/${i}`])
+          ),
+          '📁 ch04 (37张)': Object.fromEntries(
+            chapters[5].images.map(i => ['🖼 ' + i, imgBase + '/ch04/' + i])
+          ),
+          '📁 ch05 (10张)': Object.fromEntries(
+            chapters[6].images.map(i => ['🖼 ' + i, imgBase + '/ch05/' + i])
+          )
+        }
+      }
+    }
+  }
+};
+
+function renderTree(data, container, depth = 0) {
+  const ul = document.createElement('ul');
+  for (const [key, value] of Object.entries(data)) {
+    const li = document.createElement('li');
+    const isFolder = key.startsWith('📁');
+    const isMd = key.endsWith('.md');
+    const cls = isFolder ? 'folder' : (isMd ? 'md-file' : 'file');
+    if (typeof value === 'string') {
+      li.innerHTML = `<span class="${cls}">${key}</span>`;
+    } else {
+      li.innerHTML = `<span class="folder" style="cursor:pointer;">${key}</span>`;
+      if (Object.keys(value).length > 0) {
+        renderTree(value, li, depth + 1);
+      }
+    }
+    ul.appendChild(li);
+  }
+  container.appendChild(ul);
+}
+renderTree(treeData, fileTree);
+
+// ===== 初始化 =====
+scanImages();
+
+// ===== 侧边栏滚动高亮 =====
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const sections = document.querySelectorAll('section[id], main > div[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) {
+      current = s.getAttribute('id');
+    }
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
