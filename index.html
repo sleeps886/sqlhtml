@@ -641,49 +641,49 @@ const tasks = [
     title: "绪论 - 环境搭建",
     desc: "MySQL 8.0 的安装配置，连接数据库并执行第一条 SQL 查询，为后续学习做好准备。",
     tags: ["环境搭建", "MySQL安装", "入门"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task00：绪论 - 环境搭建.md"
+    url: "task00.html"
   },
   {
     num: "Task 01",
     title: "初识数据库",
     desc: "数据库基本概念介绍，DBMS 的种类与特点，SQL 语言基础及数据库、表的创建操作。",
     tags: ["数据库基础", "SQL入门", "DDL"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task01：初识数据库.md"
+    url: "task01.html"
   },
   {
     num: "Task 02",
     title: "基础查询与排序",
     desc: "SELECT 语句基础、算术/比较/逻辑运算符、聚合查询、分组操作及 HAVING 条件过滤。",
     tags: ["SELECT", "聚合函数", "GROUP BY", "HAVING"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task02：基础查询与排序.md"
+    url: "task02.html"
   },
   {
     num: "Task 03",
     title: "复杂一点的查询",
     desc: "视图的创建与使用、子查询、多种内置函数、谓词及 CASE 表达式的灵活运用。",
     tags: ["视图", "子查询", "函数", "CASE"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task03：复杂一点的查询.md"
+    url: "task03.html"
   },
   {
     num: "Task 04",
     title: "集合运算",
     desc: "表的加减法操作（UNION/EXCEPT/INTERSECT）及各种 JOIN 连结查询的详细讲解。",
     tags: ["集合运算", "JOIN", "UNION", "连结"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task04：集合运算.md"
+    url: "task04.html"
   },
   {
     num: "Task 05",
     title: "SQL高级处理",
     desc: "窗口函数（RANK/DENSE_RANK/ROW_NUMBER）、移动平均计算及 GROUPING 运算符。",
     tags: ["窗口函数", "OLAP", "高级查询"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task05：SQL高级处理.md"
+    url: "task05.html"
   },
   {
     num: "Task 06",
     title: "综合练习",
     desc: "LeetCode 练习题及大厂面试真题，巩固所学知识，轻松应对初级 SQL 面试。",
     tags: ["练习", "面试", "实战"],
-    file: "ser/team-learning-sql-main/team-learning-sql-main/Task06：综合练习.md"
+    url: "task06.html"
   }
 ];
 
@@ -693,7 +693,7 @@ tasks.forEach((task, i) => {
   const card = document.createElement('div');
   card.className = 'task-card';
   card.style.cursor = 'pointer';
-  card.onclick = () => openContent(task);
+  card.onclick = () => { window.location.href = task.url; };
   card.innerHTML = `
     <div class="card-header">
       <span class="card-num">${task.num}</span>

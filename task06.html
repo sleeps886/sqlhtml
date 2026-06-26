@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task06 综合练习 - SQL 基础教程</title>
+<style>
+:root { --bg: #f8f9fa; --accent2: #7c4dff; --text: #333; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.7; }
+.topbar { position:sticky; top:0; z-index:100; display:flex; align-items:center;
+  justify-content:space-between; padding:12px 28px; background:#1a1a2e; color:#fff; }
+.topbar .title { font-size:0.95rem; font-weight:700; }
+.topbar .close-btn { width:36px; height:36px; border:none; background:rgba(255,255,255,0.12);
+  color:#fff; font-size:1.3rem; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s; text-decoration:none; }
+.topbar .close-btn:hover { background:rgba(255,255,255,0.25); }
+.main { max-width:960px; margin:0 auto; padding:32px 36px 60px; }
+.markdown-body { color:#24292e; line-height:1.8; }
+.markdown-body h1 { font-size:1.8rem; font-weight:800; margin:0 0 16px; padding-bottom:10px;
+  border-bottom:3px solid var(--accent2); color:#1a1a2e; }
+.markdown-body h2 { font-size:1.3rem; font-weight:700; margin:32px 0 14px; padding-bottom:8px;
+  border-bottom:2px solid #eaecef; color:#1a1a2e; }
+.markdown-body h3 { font-size:1.1rem; font-weight:700; margin:24px 0 10px; color:#333; }
+.markdown-body h4 { font-size:1rem; font-weight:700; margin:18px 0 8px; color:#444; }
+.markdown-body p { margin:0 0 14px; }
+.markdown-body ul,.markdown-body ol { padding-left:24px; margin:0 0 14px; }
+.markdown-body li { margin-bottom:4px; }
+.markdown-body a { color:#0366d6; }
+.markdown-body strong { font-weight:700; color:#1a1a2e; }
+.markdown-body code { background:#f0f0f5; padding:2px 7px; border-radius:4px; font-size:0.88em;
+  font-family:"SF Mono","Fira Code",Consolas,monospace; color:#c7254e; }
+.markdown-body pre { background:#1a1a2e; color:#cdd6f4; padding:20px 24px; border-radius:10px;
+  overflow-x:auto; margin:16px 0; font-size:0.88rem; line-height:1.6; }
+.markdown-body pre code { background:transparent; padding:0; color:inherit; }
+.markdown-body table { width:100%; border-collapse:collapse; margin:16px 0; font-size:0.9rem; }
+.markdown-body th,.markdown-body td { border:1px solid #dfe2e5; padding:10px 14px; text-align:left; }
+.markdown-body th { background:#f6f8fa; font-weight:700; }
+.markdown-body tr:nth-child(even) { background:#fafbfc; }
+.markdown-body blockquote { border-left:4px solid #7c4dff; padding:8px 18px; margin:14px 0;
+  background:#f8f7ff; border-radius:0 6px 6px 0; color:#555; }
+.markdown-body img { max-width:100%; border-radius:8px; margin:12px 0;
+  box-shadow:0 2px 12px rgba(0,0,0,0.1); cursor:pointer; }
+.markdown-body hr { border:none; border-top:2px solid #eaecef; margin:28px 0; }
+.modal { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.88);
+  z-index:9999; justify-content:center; align-items:center; cursor:pointer; }
+.modal.active { display:flex; }
+.modal img { max-width:94vw; max-height:94vh; border-radius:8px; }
+.modal-close { position:absolute; top:20px;right:20px; width:44px;height:44px;
+  background:rgba(255,255,255,0.15); border:none; border-radius:50%; color:#fff;
+  font-size:1.5rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="title">&#x1F4D8; Task06 综合练习</span>
+  <a href="index.html" class="close-btn" title="关闭返回首页">&times;</a>
+</div>
+<main class="main"><div class="markdown-body">
+<h1>练习一: 各部门工资最高的员工（难度：中等）</h1>
+
+<p>创建Employee 表，包含所有员工信息，每个员工有其对应的 Id, salary 和 department Id。</p>
+
+<pre><code class="language-plain">+----+-------+--------+--------------+
+<table><tr><th>Id</th><th>Name</th><th>Salary</th><th>DepartmentId</th></tr></table>
+<p>+----+-------+--------+--------------+</p>
+<table><tr><th>1</th><th>Joe</th><th>70000</th><th>1</th></tr>
+<tr><td>2</td><td>Henry</td><td>80000</td><td>2</td></tr>
+<tr><td>3</td><td>Sam</td><td>60000</td><td>2</td></tr>
+<tr><td>4</td><td>Max</td><td>90000</td><td>1</td></tr></table>
+<p>+----+-------+--------+--------------+</p>
+</code></pre>
+<p>创建Department 表，包含公司所有部门的信息。</p>
+<pre><code class="language-plain">+----+----------+
+<table><tr><th>Id</th><th>Name</th></tr></table>
+<p>+----+----------+</p>
+<table><tr><th>1</th><th>IT</th></tr>
+<tr><td>2</td><td>Sales</td></tr></table>
+<p>+----+----------+</p>
+</code></pre>
+<p>编写一个 SQL 查询，找出每个部门工资最高的员工。例如，根据上述给定的表格，Max 在 IT 部门有最高工资，Henry 在 Sales 部门有最高工资。</p>
+<pre><code class="language-plain">+------------+----------+--------+
+<table><tr><th>Department</th><th>Employee</th><th>Salary</th></tr></table>
+<p>+------------+----------+--------+</p>
+<table><tr><th>IT</th><th>Max</th><th>90000</th></tr>
+<tr><td>Sales</td><td>Henry</td><td>80000</td></tr></table>
+<p>+------------+----------+--------+</p>
+</code></pre>
+
+<h1>练习二: 换座位（难度：中等）</h1>
+
+<p>小美是一所中学的信息科技老师，她有一张 seat 座位表，平时用来储存学生名字和与他们相对应的座位 id。</p>
+
+<p>其中纵列的<strong>id</strong>是连续递增的</p>
+
+<p>小美想改变相邻俩学生的座位。</p>
+
+<p>你能不能帮她写一个 SQL query 来输出小美想要的结果呢？</p>
+
+<p>请创建如下所示seat表：</p>
+
+<strong>示例：</strong>
+
+<pre><code class="language-plain">+---------+---------+
+<table><tr><th>id</th><th>student</th></tr></table>
+<p>+---------+---------+</p>
+<table><tr><th>1</th><th>Abbot</th></tr>
+<tr><td>2</td><td>Doris</td></tr>
+<tr><td>3</td><td>Emerson</td></tr>
+<tr><td>4</td><td>Green</td></tr>
+<tr><td>5</td><td>Jeames</td></tr></table>
+<p>+---------+---------+</p>
+</code></pre>
+<p>假如数据输入的是上表，则输出结果如下：</p>
+<pre><code class="language-plain">+---------+---------+
+<table><tr><th>id</th><th>student</th></tr></table>
+<p>+---------+---------+</p>
+<table><tr><th>1</th><th>Doris</th></tr>
+<tr><td>2</td><td>Abbot</td></tr>
+<tr><td>3</td><td>Green</td></tr>
+<tr><td>4</td><td>Emerson</td></tr>
+<tr><td>5</td><td>Jeames</td></tr></table>
+<p>+---------+---------+</p>
+</code></pre>
+<strong>注意：</strong>
+<p>如果学生人数是奇数，则不需要改变最后一个同学的座位。</p>
+
+
+<h1>练习三:  分数排名（难度：中等）</h1>
+
+<p>编写一个 SQL 查询来实现分数排名。如果两个分数相同，则两个分数排名（Rank）相同。请注意，平分后的下一个名次应该是下一个连续的整数值。换句话说，名次之间不应该有“间隔”。</p>
+
+<p>创建以下score表：</p>
+
+<pre><code class="language-plain">+----+-------+
+<table><tr><th>Id</th><th>Score</th></tr></table>
+<p>+----+-------+</p>
+<table><tr><th>1</th><th>3.50</th></tr>
+<tr><td>2</td><td>3.65</td></tr>
+<tr><td>3</td><td>4.00</td></tr>
+<tr><td>4</td><td>3.85</td></tr>
+<tr><td>5</td><td>4.00</td></tr>
+<tr><td>6</td><td>3.65</td></tr></table>
+<p>+----+-------+</p>
+</code></pre>
+<p>例如，根据上述给定的 Scores 表，你的查询应该返回（按分数从高到低排列）：</p>
+<pre><code class="language-plain">+-------+------+
+<table><tr><th>Score</th><th>Rank</th></tr></table>
+<p>+-------+------+</p>
+<table><tr><th>4.00</th><th>1</th></tr>
+<tr><td>4.00</td><td>1</td></tr>
+<tr><td>3.85</td><td>2</td></tr>
+<tr><td>3.65</td><td>3</td></tr>
+<tr><td>3.65</td><td>3</td></tr>
+<tr><td>3.50</td><td>4</td></tr></table>
+<p>+-------+------+</p>
+</code></pre>
+<h1>练习四：连续出现的数字（难度：中等）</h1>
+
+<p>编写一个 SQL 查询，查找所有至少连续出现三次的数字。</p>
+
+<pre><code class="language-plain">+----+-----+
+<table><tr><th>Id</th><th>Num</th></tr></table>
+<p>+----+-----+</p>
+<table><tr><th>1</th><th>1</th></tr>
+<tr><td>2</td><td>1</td></tr>
+<tr><td>3</td><td>1</td></tr>
+<tr><td>4</td><td>2</td></tr>
+<tr><td>5</td><td>1</td></tr>
+<tr><td>6</td><td>2</td></tr>
+<tr><td>7</td><td>2</td></tr></table>
+<p>+----+-----+</p>
+</code></pre>
+<p>例如，给定上面的 Logs 表， 1 是唯一连续出现至少三次的数字。</p>
+<pre><code class="language-plain">+-----------------+
+<table><tr><th>ConsecutiveNums</th></tr></table>
+<p>+-----------------+</p>
+<table><tr><th>1</th></tr></table>
+<p>+-----------------+</p>
+</code></pre>
+<h1>练习五：树节点 （难度：中等）</h1>
+
+<p>对于<strong>tree</strong>表，<em>id</em>是树节点的标识，<em>p_id</em>是其父节点的<em>id</em>。</p>
+
+<pre><code class="language-plain">+----+------+
+<table><tr><th>id</th><th>p_id</th></tr></table>
+<p>+----+------+</p>
+<table><tr><th>1</th><th>null</th></tr>
+<tr><td>2</td><td>1</td></tr>
+<tr><td>3</td><td>1</td></tr>
+<tr><td>4</td><td>2</td></tr>
+<tr><td>5</td><td>2</td></tr></table>
+<p>+----+------+</p>
+</code></pre>
+<p>每个节点都是以下三种类型中的一种：</p>
+<ul>
+<li>Root: 如果节点是根节点。</li>
+<li>Leaf: 如果节点是叶子节点。</li>
+<li>Inner: 如果节点既不是根节点也不是叶子节点。</li>
+</ul>
+
+<p>写一条查询语句打印节点id及对应的节点类型。按照节点id排序。上面例子的对应结果为：</p>
+
+<pre><code class="language-plain">+----+------+
+<table><tr><th>id</th><th>Type</th></tr></table>
+<p>+----+------+</p>
+<table><tr><th>1</th><th>Root</th></tr>
+<tr><td>2</td><td>Inner</td></tr>
+<tr><td>3</td><td>Leaf</td></tr>
+<tr><td>4</td><td>Leaf</td></tr>
+<tr><td>5</td><td>Leaf</td></tr></table>
+<p>+----+------+</p>
+</code></pre>
+<strong>说明</strong>
+<ul>
+<li>节点’1’是根节点，因为它的父节点为NULL，有’2’和’3’两个子节点。</li>
+<li>节点’2’是内部节点，因为它的父节点是’1’，有子节点’4’和’5’。</li>
+<li>节点’3’，‘4’，'5’是叶子节点，因为它们有父节点但没有子节点。</li>
+</ul>
+
+<p>下面是树的图形：</p>
+
+<p>        1         </p>
+<p>      /   \ </p>
+<p>     2    3    </p>
+<p>    / \</p>
+<p>    4  5</p>
+
+<strong>注意</strong>
+
+<p>如果一个树只有一个节点，只需要输出根节点属性。</p>
+
+<h1>练习六：至少有五名直接下属的经理 （难度：中等）</h1>
+
+<strong>Employee</strong>表包含所有员工及其上级的信息。每位员工都有一个Id，并且还有一个对应主管的Id（ManagerId）。
+
+<pre><code class="language-plain">+------+----------+-----------+----------+
+<table><tr><th>Id</th><th>Name</th><th>Department</th><th>ManagerId</th></tr></table>
+<p>+------+----------+-----------+----------+</p>
+<table><tr><th>101</th><th>John</th><th>A</th><th>null</th></tr>
+<tr><td>102</td><td>Dan</td><td>A</td><td>101</td></tr>
+<tr><td>103</td><td>James</td><td>A</td><td>101</td></tr>
+<tr><td>104</td><td>Amy</td><td>A</td><td>101</td></tr>
+<tr><td>105</td><td>Anne</td><td>A</td><td>101</td></tr>
+<tr><td>106</td><td>Ron</td><td>B</td><td>101</td></tr></table>
+<p>+------+----------+-----------+----------+</p>
+</code></pre>
+<p>针对<strong>Employee</strong>表，写一条SQL语句找出有5个下属的主管。对于上面的表，结果应输出：</p>
+
+<pre><code class="language-plain">+-------+
+<table><tr><th>Name</th></tr></table>
+<p>+-------+</p>
+<table><tr><th>John</th></tr></table>
+<p>+-------+</p>
+</code></pre>
+<strong>注意:</strong>
+
+<p>没有人向自己汇报。</p>
+
+
+<h1>练习七: 分数排名  （难度：中等）</h1>
+
+<p>练习三的分数表，实现排名功能，但是排名需要是非连续的，如下：</p>
+
+<pre><code class="language-plain">+-------+------+
+<table><tr><th>Score</th><th>Rank</th></tr></table>
+<p>+-------+------+</p>
+<table><tr><th>4.00</th><th>1</th></tr>
+<tr><td>4.00</td><td>1</td></tr>
+<tr><td>3.85</td><td>3</td></tr>
+<tr><td>3.65</td><td>4</td></tr>
+<tr><td>3.65</td><td>4</td></tr>
+<tr><td>3.50</td><td>6</td></tr></table>
+<p>+-------+------</p>
+</code></pre>
+<h1>练习八：查询回答率最高的问题 （难度：中等）</h1>
+
+<p>求出<strong>survey_log</strong>表中回答率最高的问题，表格的字段有：<strong>uid, action, question_id, answer_id, q_num, timestamp</strong>。</p>
+
+<p>uid是用户id；action的值为：“show”， “answer”， “skip”；当action是"answer"时，answer_id不为空，相反，当action是"show"和"skip"时为空（null）；q_num是问题的数字序号。</p>
+
+<p>写一条sql语句找出回答率最高的问题。</p>
+
+<strong>举例：</strong>
+
+<strong>输入</strong>
+
+<table><tr><th>uid</th><th>action</th><th>question_id</th><th>answer_id</th><th>q_num</th><th>timestamp</th></tr>
+<tr><td>5</td><td>show</td><td>285</td><td>null</td><td>1</td><td>123</td></tr>
+<tr><td>5</td><td>answer</td><td>285</td><td>124124</td><td>1</td><td>124</td></tr>
+<tr><td>5</td><td>show</td><td>369</td><td>null</td><td>2</td><td>125</td></tr>
+<tr><td>5</td><td>skip</td><td>369</td><td>null</td><td>2</td><td>126</td></tr></table>
+
+<strong>输出</strong>
+
+<table><tr><th>survey_log</th></tr>
+<tr><td>285</td></tr></table>
+
+<strong>说明</strong>
+
+<p>问题285的回答率为1/1，然而问题369的回答率是0/1，所以输出是285。</p>
+
+<strong>注意：</strong>最高回答率的意思是：同一个问题出现的次数中回答的比例。
+
+<h1>练习九：各部门前3高工资的员工（难度：中等）</h1>
+
+<p>将项目7中的employee表清空，重新插入以下数据（其实是多插入5,6两行）：</p>
+
+<pre><code class="language-plain">+----+-------+--------+--------------+
+<table><tr><th>Id</th><th>Name</th><th>Salary</th><th>DepartmentId</th></tr></table>
+<p>+----+-------+--------+--------------+</p>
+<table><tr><th>1</th><th>Joe</th><th>70000</th><th>1</th></tr>
+<tr><td>2</td><td>Henry</td><td>80000</td><td>2</td></tr>
+<tr><td>3</td><td>Sam</td><td>60000</td><td>2</td></tr>
+<tr><td>4</td><td>Max</td><td>90000</td><td>1</td></tr>
+<tr><td>5</td><td>Janet</td><td>69000</td><td>1</td></tr>
+<tr><td>6</td><td>Randy</td><td>85000</td><td>1</td></tr></table>
+<p>+----+-------+--------+--------------+</p>
+</code></pre>
+<p>编写一个 SQL 查询，找出每个部门工资前三高的员工。例如，根据上述给定的表格，查询结果应返回：</p>
+<pre><code class="language-plain">+------------+----------+--------+
+<table><tr><th>Department</th><th>Employee</th><th>Salary</th></tr></table>
+<p>+------------+----------+--------+</p>
+<table><tr><th>IT</th><th>Max</th><th>90000</th></tr>
+<tr><td>IT</td><td>Randy</td><td>85000</td></tr>
+<tr><td>IT</td><td>Joe</td><td>70000</td></tr>
+<tr><td>Sales</td><td>Henry</td><td>80000</td></tr>
+<tr><td>Sales</td><td>Sam</td><td>60000</td></tr></table>
+<p>+------------+----------+--------+</p>
+</code></pre>
+<p>此外，请考虑实现各部门前N高工资的员工功能。</p>
+
+<h1>练习十：平面上最近距离 (难度: 困难）</h1>
+
+<strong>point_2d</strong>表包含一个平面内一些点（超过两个）的坐标值（x，y）。
+
+<p>写一条查询语句求出这些点中的最短距离并保留2位小数。</p>
+
+<pre><code class="language-plain">|x   | y  |
+<table><tr><th>-1</th><th>-1</th></tr>
+<tr><td>0</td><td>0</td></tr>
+<tr><td>-1</td><td>-2</td></tr></table>
+</code></pre>
+<p>最短距离是1，从点（-1，-1）到点（-1，-2）。所以输出结果为：</p>
+
+<table><tr><th>shortest</th></tr></table>
+
+<p>1.00</p>
+
+<pre><code class="language-plain">+--------+
+<table><tr><th>shortest</th></tr></table>
+<p>+--------+</p>
+<table><tr><th>1.00</th></tr></table>
+<p>+--------+</p>
+</code></pre>
+<strong>注意：</strong>所有点的最大距离小于10000。
+
+<h1>练习十一：行程和用户（难度：困难）</h1>
+
+<p>Trips 表中存所有出租车的行程信息。每段行程有唯一键 Id，Client_Id 和 Driver_Id 是 Users 表中 Users_Id 的外键。Status 是枚举类型，枚举成员为 (‘completed’, ‘cancelled_by_driver’, ‘cancelled_by_client’)。</p>
+
+<table><tr><th>Id</th><th>Client_Id</th><th>Driver_Id</th><th>City_Id</th><th>Status</th><th>Request_at</th></tr>
+<tr><td>1</td><td>1</td><td>10</td><td>1</td><td>completed</td><td>2013-10-1</td></tr>
+<tr><td>2</td><td>2</td><td>11</td><td>1</td><td>cancelled_by_driver</td><td>2013-10-1</td></tr>
+<tr><td>3</td><td>3</td><td>12</td><td>6</td><td>completed</td><td>2013-10-1</td></tr>
+<tr><td>4</td><td>4</td><td>13</td><td>6</td><td>cancelled_by_client</td><td>2013-10-1</td></tr>
+<tr><td>5</td><td>1</td><td>10</td><td>1</td><td>completed</td><td>2013-10-2</td></tr>
+<tr><td>6</td><td>2</td><td>11</td><td>6</td><td>completed</td><td>2013-10-2</td></tr>
+<tr><td>7</td><td>3</td><td>12</td><td>6</td><td>completed</td><td>2013-10-2</td></tr>
+<tr><td>8</td><td>2</td><td>12</td><td>12</td><td>completed</td><td>2013-10-3</td></tr>
+<tr><td>9</td><td>3</td><td>10</td><td>12</td><td>completed</td><td>2013-10-3</td></tr>
+<tr><td>10</td><td>4</td><td>13</td><td>12</td><td>cancelled_by_driver</td><td>2013-10-3</td></tr></table>
+
+<p>Users 表存所有用户。每个用户有唯一键 Users_Id。Banned 表示这个用户是否被禁止，Role 则是一个表示（‘client’, ‘driver’, ‘partner’）的枚举类型。</p>
+
+<pre><code class="language-plain">+----------+--------+--------+
+<table><tr><th>Users_Id</th><th>Banned</th><th>Role</th></tr></table>
+<p>+----------+--------+--------+</p>
+<table><tr><th>1</th><th>No</th><th>client</th></tr>
+<tr><td>2</td><td>Yes</td><td>client</td></tr>
+<tr><td>3</td><td>No</td><td>client</td></tr>
+<tr><td>4</td><td>No</td><td>client</td></tr>
+<tr><td>10</td><td>No</td><td>driver</td></tr>
+<tr><td>11</td><td>No</td><td>driver</td></tr>
+<tr><td>12</td><td>No</td><td>driver</td></tr>
+<tr><td>13</td><td>No</td><td>driver</td></tr></table>
+<p>+----------+--------+--------+</p>
+</code></pre>
+<p>写一段 SQL 语句查出<strong>2013年10月1日</strong>至<strong>2013年10月3日</strong>期间非禁止用户的取消率。基于上表，你的 SQL 语句应返回如下结果，取消率（Cancellation Rate）保留两位小数。</p>
+<pre><code class="language-plain">+------------+-------------------+
+<table><tr><th>Day</th><th>Cancellation Rate</th></tr></table>
+<p>+------------+-------------------+</p>
+<table><tr><th>2013-10-01</th><th>0.33</th></tr>
+<tr><td>2013-10-02</td><td>0.00</td></tr>
+<tr><td>2013-10-03</td><td>0.50</td></tr></table>
+<p>+------------+-------------------+</p>
+</code></pre>
+
+
+
+
+
+
+</div></main>
+<div class="modal" id="imgModal" onclick="this.classList.remove('active')">
+  <button class="modal-close">&times;</button>
+  <img id="modalImg" src="">
+</div>
+</body>
+</html>
