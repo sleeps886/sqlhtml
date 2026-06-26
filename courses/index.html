@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oldguo MySQL DBA 课程</title>
+<style>
+:root { --bg: #f8f9fa; --text: #333; --card: #fff; --border: #e0e0e0; --shadow: 0 2px 12px rgba(0,0,0,0.08); }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.7; }
+.topbar { position:sticky; top:0; z-index:100; display:flex; align-items:center;
+  justify-content:space-between; padding:12px 28px; background:#1a1a2e; color:#fff; }
+.topbar .title { font-size:0.95rem; font-weight:700; }
+.topbar .close-btn { width:36px; height:36px; border:none; background:rgba(255,255,255,0.12);
+  color:#fff; font-size:1.3rem; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s; text-decoration:none; }
+.topbar .close-btn:hover { background:rgba(255,255,255,0.25); }
+.main { max-width:1000px; margin:0 auto; padding:32px 36px 60px; }
+.hero { background:linear-gradient(135deg,#1a1a2e,#2c3e50); color:#fff; border-radius:12px;
+  padding:32px; margin-bottom:28px; }
+.hero h1 { font-size:1.5rem; font-weight:800; margin-bottom:8px; }
+.hero p { opacity:0.8; font-size:0.9rem; }
+.category { margin:28px 0 16px; }
+.category h2 { font-size:1.15rem; font-weight:700; color:#1a1a2e; padding-bottom:8px;
+  border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+.category h2 .badge { font-size:0.75rem; padding:3px 10px; border-radius:12px;
+  background:#7c4dff; color:#fff; font-weight:600; }
+.lesson-list { display:grid; gap:8px; }
+.lesson-item { display:flex; align-items:center; gap:12px; padding:12px 16px;
+  background:var(--card); border:1px solid var(--border); border-radius:8px;
+  box-shadow:var(--shadow); transition:transform 0.15s,box-shadow 0.15s;
+  text-decoration:none; color:inherit; }
+.lesson-item:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.14); }
+.lesson-num { width:32px; height:32px; border-radius:50%; font-weight:800; font-size:0.8rem;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.lesson-item.mysql .lesson-num { background:#e3f2fd; color:#1565c0; }
+.lesson-item.nosql .lesson-num { background:#fce4ec; color:#c62828; }
+.lesson-item.tool .lesson-num { background:#fff3e0; color:#e65100; }
+.lesson-info { flex:1; min-width:0; }
+.lesson-title { font-weight:650; font-size:0.92rem; }
+.lesson-url { font-size:0.75rem; color:#999; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lesson-arrow { color:#bbb; font-size:1.2rem; flex-shrink:0; }
+.footer { text-align:center; color:#999; font-size:0.8rem; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="topbar"><span class="title">Oldguo MySQL DBA</span><a href="../index.html" class="close-btn" title="返回首页">&times;</a></div>
+<main class="main">
+<div class="hero"><h1>Oldguo 标杆班级 - MySQL DBA 全套课程笔记</h1><p>共 25 篇文章，涵盖 MySQL 体系结构、SQL应用、索引、存储引擎、日志、备份恢复、主从复制、MHA高可用、读写分离、优化、Redis、MongoDB、MyCAT分布式等。点击条目在新标签页打开原文。</p></div>
+<div class="category"><h2>MySQL 核心课程 <span class="badge">12</span></h2></div>
+<div class="lesson-list">
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/dd7137c4efa5" target="_blank" rel="noopener">
+      <span class="lesson-num">01</span>
+      <span class="lesson-info"><span class="lesson-title">lesson01 - 简介及安装</span>
+      <span class="lesson-url">jianshu.com/p/dd7137c4efa5</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/e872bc12f583" target="_blank" rel="noopener">
+      <span class="lesson-num">02</span>
+      <span class="lesson-info"><span class="lesson-title">lesson02 - 体系结构与管理</span>
+      <span class="lesson-url">jianshu.com/p/e872bc12f583</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/08c4b78402ff" target="_blank" rel="noopener">
+      <span class="lesson-num">03</span>
+      <span class="lesson-info"><span class="lesson-title">lesson03 - SQL基础应用</span>
+      <span class="lesson-url">jianshu.com/p/08c4b78402ff</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/8e91db776803" target="_blank" rel="noopener">
+      <span class="lesson-num">04</span>
+      <span class="lesson-info"><span class="lesson-title">lesson04 - 索引及执行计划</span>
+      <span class="lesson-url">jianshu.com/p/8e91db776803</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/4a344bb75d36" target="_blank" rel="noopener">
+      <span class="lesson-num">05</span>
+      <span class="lesson-info"><span class="lesson-title">lesson05 - 存储引擎</span>
+      <span class="lesson-url">jianshu.com/p/4a344bb75d36</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/00c54d2832ed" target="_blank" rel="noopener">
+      <span class="lesson-num">06</span>
+      <span class="lesson-info"><span class="lesson-title">lesson06 - 日志管理</span>
+      <span class="lesson-url">jianshu.com/p/00c54d2832ed</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/6fbdcb7695cb" target="_blank" rel="noopener">
+      <span class="lesson-num">07</span>
+      <span class="lesson-info"><span class="lesson-title">lesson07 - 备份恢复</span>
+      <span class="lesson-url">jianshu.com/p/6fbdcb7695cb</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/6ed2cc292077" target="_blank" rel="noopener">
+      <span class="lesson-num">08</span>
+      <span class="lesson-info"><span class="lesson-title">lesson08 - 主从复制基础</span>
+      <span class="lesson-url">jianshu.com/p/6ed2cc292077</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/82bc8ed98e7f" target="_blank" rel="noopener">
+      <span class="lesson-num">09</span>
+      <span class="lesson-info"><span class="lesson-title">lesson09 - 主从复制高级进阶</span>
+      <span class="lesson-url">jianshu.com/p/82bc8ed98e7f</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/0f7b5a962ba7" target="_blank" rel="noopener">
+      <span class="lesson-num">10</span>
+      <span class="lesson-info"><span class="lesson-title">lesson10 - MHA高可用技术</span>
+      <span class="lesson-url">jianshu.com/p/0f7b5a962ba7</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/051c44f73530" target="_blank" rel="noopener">
+      <span class="lesson-num">11</span>
+      <span class="lesson-info"><span class="lesson-title">lesson11 - 读写分离架构-Atlas</span>
+      <span class="lesson-url">jianshu.com/p/051c44f73530</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item mysql" href="https://www.jianshu.com/p/5dbb5e095c9a" target="_blank" rel="noopener">
+      <span class="lesson-num">12</span>
+      <span class="lesson-info"><span class="lesson-title">lesson12 - 优化</span>
+      <span class="lesson-url">jianshu.com/p/5dbb5e095c9a</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+</div>
+<div class="category"><h2>NoSQL 与分布式 <span class="badge">3</span></h2></div>
+<div class="lesson-list">
+    <a class="lesson-item nosql" href="https://www.jianshu.com/p/8af6177f4c23" target="_blank" rel="noopener">
+      <span class="lesson-num">13</span>
+      <span class="lesson-info"><span class="lesson-title">lesson13 - Redis缓存技术-运维篇</span>
+      <span class="lesson-url">jianshu.com/p/8af6177f4c23</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item nosql" href="https://www.jianshu.com/p/cf7416f4a036" target="_blank" rel="noopener">
+      <span class="lesson-num">14</span>
+      <span class="lesson-info"><span class="lesson-title">lesson14 - MongoDB核心技术-运维篇</span>
+      <span class="lesson-url">jianshu.com/p/cf7416f4a036</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item nosql" href="https://www.jianshu.com/p/5e0062f6cf62" target="_blank" rel="noopener">
+      <span class="lesson-num">15</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 分布式架构 - MyCAT</span>
+      <span class="lesson-url">jianshu.com/p/5e0062f6cf62</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+</div>
+<div class="category"><h2>进阶专题 & 工具 <span class="badge">10</span></h2></div>
+<div class="lesson-list">
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/de1646631a98" target="_blank" rel="noopener">
+      <span class="lesson-num">16</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 第一阶段测试题（有答案）</span>
+      <span class="lesson-url">jianshu.com/p/de1646631a98</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/eba3a5541c4c" target="_blank" rel="noopener">
+      <span class="lesson-num">17</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 十万个为什么?</span>
+      <span class="lesson-url">jianshu.com/p/eba3a5541c4c</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/8c66e0f65324" target="_blank" rel="noopener">
+      <span class="lesson-num">18</span>
+      <span class="lesson-info"><span class="lesson-title">5.7.20 多实例 - MGR部署实战</span>
+      <span class="lesson-url">jianshu.com/p/8c66e0f65324</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/3a68062e2412" target="_blank" rel="noopener">
+      <span class="lesson-num">19</span>
+      <span class="lesson-info"><span class="lesson-title">标杆班级 MySQL 课程梳理</span>
+      <span class="lesson-url">jianshu.com/p/3a68062e2412</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/e5f65344227b" target="_blank" rel="noopener">
+      <span class="lesson-num">20</span>
+      <span class="lesson-info"><span class="lesson-title">标杆班级 DBA 职业发展线路</span>
+      <span class="lesson-url">jianshu.com/p/e5f65344227b</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/6f2cb7874abd" target="_blank" rel="noopener">
+      <span class="lesson-num">21</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 5.6/5.7/8.0 安装部署异同</span>
+      <span class="lesson-url">jianshu.com/p/6f2cb7874abd</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/898d2e4bd3a7" target="_blank" rel="noopener">
+      <span class="lesson-num">22</span>
+      <span class="lesson-info"><span class="lesson-title">Zabbix 3.0 for Percona-server TokuDB</span>
+      <span class="lesson-url">jianshu.com/p/898d2e4bd3a7</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/eeb2d31923b1" target="_blank" rel="noopener">
+      <span class="lesson-num">23</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 8.0.17+ clone-plugin 应用</span>
+      <span class="lesson-url">jianshu.com/p/eeb2d31923b1</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/d225fa6a16fe" target="_blank" rel="noopener">
+      <span class="lesson-num">24</span>
+      <span class="lesson-info"><span class="lesson-title">MySQL 5.7 Multi-Source Replication</span>
+      <span class="lesson-url">jianshu.com/p/d225fa6a16fe</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+    <a class="lesson-item tool" href="https://www.jianshu.com/p/c97228b6f60c" target="_blank" rel="noopener">
+      <span class="lesson-num">25</span>
+      <span class="lesson-info"><span class="lesson-title">Percona-toolkit 工具详解</span>
+      <span class="lesson-url">jianshu.com/p/c97228b6f60c</span></span>
+      <span class="lesson-arrow">&rarr;</span>
+    </a>
+</div>
+<div class="footer">共 25 篇文章 · 来源：简书 · 作者：Oldguo</div>
+</main>
+</body>
+</html>
